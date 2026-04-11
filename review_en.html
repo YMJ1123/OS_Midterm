@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OS Midterm Review</title>
+<style>
+:root {
+  --bg: #0f172a; --card: #1e293b; --card2: #263347; --border: #334155;
+  --text: #e2e8f0; --muted: #94a3b8; --accent: #3b82f6; --accent2: #60a5fa;
+  --success: #22c55e; --warning: #f59e0b; --danger: #ef4444; --purple: #a78bfa;
+  --ch1: #f97316; --ch2: #06b6d4; --ch3: #10b981; --ch4: #a78bfa; --ch5: #f43f5e;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+a { color: var(--accent2); text-decoration: none; }
+
+.nav { background: #0a1628; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+.nav-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 4px; padding: 0 16px; overflow-x: auto; }
+.nav-title { font-weight: 700; font-size: 1.1rem; padding: 14px 12px 14px 0; color: var(--accent2); white-space: nowrap; border-right: 1px solid var(--border); margin-right: 8px; }
+.nav-btn { padding: 12px 14px; cursor: pointer; border: none; background: none; color: var(--muted); font-size: 0.88rem; font-weight: 500; white-space: nowrap; border-bottom: 3px solid transparent; transition: all .2s; }
+.nav-btn:hover { color: var(--text); }
+.nav-btn.active { color: var(--accent2); border-bottom-color: var(--accent2); }
+
+.page { display: none; max-width: 1100px; margin: 0 auto; padding: 24px 16px 80px; }
+.page.active { display: block; }
+
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+.card-title { font-size: 1rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.section-header { font-size: 1.3rem; font-weight: 800; margin: 28px 0 12px; padding-left: 12px; border-left: 4px solid var(--accent); }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+@media(max-width:700px) { .grid2,.grid3 { grid-template-columns: 1fr; } }
+
+.badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+.badge-red { background: #7f1d1d; color: #fca5a5; }
+.badge-orange { background: #7c2d12; color: #fdba74; }
+.badge-yellow { background: #713f12; color: #fde68a; }
+.badge-green { background: #14532d; color: #86efac; }
+.badge-blue { background: #1e3a5f; color: #93c5fd; }
+.badge-purple { background: #3b0764; color: #c4b5fd; }
+
+.tbl { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.tbl th { background: var(--card2); padding: 10px 12px; text-align: left; color: var(--accent2); font-weight: 600; }
+.tbl td { padding: 9px 12px; border-top: 1px solid var(--border); vertical-align: top; }
+.tbl tr:hover td { background: #263347; }
+
+.keybox { background: #172033; border: 1px solid var(--accent); border-radius: 10px; padding: 16px; margin: 12px 0; }
+.keybox-title { color: var(--accent2); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; }
+.warn-box { background: #2d1a00; border: 1px solid var(--warning); border-radius: 10px; padding: 14px; margin: 12px 0; }
+.warn-title { color: var(--warning); font-weight: 700; font-size: 0.85rem; margin-bottom: 6px; }
+.success-box { background: #052e16; border: 1px solid var(--success); border-radius: 10px; padding: 14px; margin: 12px 0; }
+
+.code { background: #0d1b2e; border: 1px solid #2d3f55; border-radius: 8px; padding: 14px; font-family: 'Cascadia Code','Consolas',monospace; font-size: 0.85rem; line-height: 1.7; overflow-x: auto; }
+.code .kw { color: #569cd6; } .code .fn { color: #dcdcaa; } .code .cm { color: #6a9955; }
+.code .str { color: #ce9178; } .code .num { color: #b5cea8; }
+
+.step-list { list-style: none; counter-reset: step; }
+.step-list li { counter-increment: step; display: flex; gap: 12px; margin-bottom: 10px; align-items: flex-start; }
+.step-list li::before { content: counter(step); background: var(--accent); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+
+.state-diagram { background: var(--card2); border-radius: 16px; padding: 12px; overflow-x: auto; }
+.state-diagram svg { display: block; max-width: 100%; height: auto; }
+.state-node-g { cursor: pointer; }
+.state-node-g ellipse { transition: filter .2s; }
+.state-node-g:hover ellipse, .state-node-g.active ellipse { filter: brightness(1.35) drop-shadow(0 0 8px rgba(255,255,255,.4)); }
+.state-info { background: #0f172a; border: 1px solid var(--border); border-radius: 10px; padding: 14px; min-height: 60px; margin-top: 8px; }
+.state-info h4 { color: var(--accent2); margin-bottom: 6px; }
+
+.interrupt-container { display: grid; grid-template-columns: 1fr 80px 1fr; gap: 0; }
+.int-col { display: flex; flex-direction: column; gap: 0; }
+.int-col-title { text-align: center; font-weight: 700; color: var(--accent2); padding: 10px; background: var(--card2); border-radius: 8px 8px 0 0; }
+.int-box { background: var(--card2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin: 4px 0; font-size: 0.88rem; cursor: pointer; transition: all .2s; position: relative; }
+.int-box:hover, .int-box.lit { border-color: var(--warning); background: #2d1e00; }
+.int-box .step-num { background: var(--warning); color: black; font-weight: 900; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem; margin-right: 8px; }
+.int-arrow-col { display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 20px 0; }
+.int-arrow { color: var(--warning); font-size: 1.4rem; }
+
+.fc-progress-bar { background: var(--card2); border-radius: 8px; height: 6px; margin-bottom: 20px; overflow: hidden; }
+.fc-progress-fill { height: 100%; background: var(--accent); transition: width .4s; }
+.fc-stats { display: flex; gap: 16px; margin-bottom: 20px; font-size: 0.9rem; color: var(--muted); }
+.fc-scene { perspective: 1000px; height: 260px; margin-bottom: 20px; cursor: pointer; }
+.fc-card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform .5s; }
+.fc-card.flipped { transform: rotateY(180deg); }
+.fc-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px; text-align: center; border: 1px solid var(--border); }
+.fc-front { background: linear-gradient(135deg, #1e3a5f, #1e293b); }
+.fc-back { background: linear-gradient(135deg, #052e16, #1e293b); transform: rotateY(180deg); }
+.fc-face .label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 12px; }
+.fc-face .main { font-size: 1.1rem; font-weight: 600; line-height: 1.6; }
+.fc-face .sub { font-size: 0.85rem; color: var(--muted); margin-top: 10px; }
+.fc-answer { font-size: 1rem; line-height: 1.6; color: #a7f3d0; }
+.fc-tag { background: var(--card2); padding: 2px 10px; border-radius: 20px; font-size: 0.78rem; color: var(--muted); margin-bottom: 12px; }
+.fc-controls { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn { padding: 10px 22px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all .15s; }
+.btn:active { transform: scale(.97); }
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: #2563eb; }
+.btn-success { background: #15803d; color: white; }
+.btn-success:hover { background: #166534; }
+.btn-danger { background: #b91c1c; color: white; }
+.btn-danger:hover { background: #991b1b; }
+.btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+.btn-outline:hover { background: var(--card2); }
+.hint-text { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 10px; }
+
+.quiz-q { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+.quiz-q .qnum { color: var(--muted); font-size: 0.85rem; margin-bottom: 8px; }
+.quiz-q .qtext { font-size: 1rem; font-weight: 600; margin-bottom: 16px; line-height: 1.6; }
+.quiz-q .qcode { background: #0d1b2e; border-radius: 8px; padding: 12px; font-family: monospace; font-size: 0.85rem; line-height: 1.7; margin-bottom: 16px; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt { padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; transition: all .15s; font-size: 0.92rem; background: var(--card2); }
+.quiz-opt:hover:not(.disabled) { border-color: var(--accent); }
+.quiz-opt.correct { border-color: var(--success); background: #052e16; color: #86efac; }
+.quiz-opt.wrong { border-color: var(--danger); background: #450a0a; color: #fca5a5; }
+.quiz-opt.disabled { cursor: default; }
+.quiz-explain { background: #172033; border-left: 3px solid var(--accent); padding: 12px 16px; margin-top: 12px; border-radius: 0 8px 8px 0; font-size: 0.9rem; line-height: 1.6; display: none; }
+.quiz-explain.show { display: block; }
+.quiz-score { background: var(--card); border-radius: 16px; padding: 32px; text-align: center; }
+.quiz-score .big-num { font-size: 3rem; font-weight: 900; color: var(--accent2); }
+.fill-input { width: 100%; padding: 10px; background: var(--card2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.9rem; margin-top: 8px; }
+.fill-input:focus { outline: none; border-color: var(--accent); }
+
+.timeline { position: relative; padding-left: 28px; }
+.timeline::before { content:''; position:absolute; left:10px; top:0; bottom:0; width:2px; background:var(--border); }
+.tl-item { position: relative; margin-bottom: 16px; }
+.tl-item::before { content:''; position:absolute; left:-22px; top:6px; width:10px; height:10px; border-radius:50%; background:var(--accent); }
+.tl-item h4 { font-size:0.95rem; font-weight:700; color:var(--accent2); }
+.tl-item p { font-size:0.88rem; color:var(--muted); margin-top:3px; line-height:1.5; }
+
+.cmp-row { display: flex; gap: 12px; margin-bottom: 8px; }
+.cmp-label { width: 160px; flex-shrink: 0; font-size: 0.88rem; color: var(--muted); padding-top: 4px; }
+.cmp-bar { flex: 1; background: var(--card2); border-radius: 4px; overflow: hidden; }
+.cmp-fill { height: 28px; border-radius: 4px; display: flex; align-items: center; padding: 0 10px; font-size: 0.82rem; font-weight: 700; transition: width 1s; }
+
+.pill-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.pill { padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border); cursor: pointer; font-size: 0.85rem; font-weight: 600; color: var(--muted); transition: all .2s; background: var(--card2); }
+.pill.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+.hl { background: #312e00; color: #fde68a; padding: 1px 6px; border-radius: 4px; font-weight: 700; }
+.hl-red { background: #3f0e0e; color: #fca5a5; padding: 1px 6px; border-radius: 4px; font-weight: 700; }
+.hl-green { background: #052e16; color: #86efac; padding: 1px 6px; border-radius: 4px; font-weight: 700; }
+.hl-blue { background: #1e3a5f; color: #93c5fd; padding: 1px 6px; border-radius: 4px; font-weight: 700; }
+
+p, li { line-height: 1.7; font-size: 0.93rem; }
+
+.sa-arena { background: var(--card2); border-radius: 16px; padding: 20px; overflow-x: auto; user-select: none; }
+.sa-layer { border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; position: relative; }
+.sa-layer-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px; }
+.sa-user-layer { background: #1a1a3e; border: 1px solid #4338ca; }
+.sa-lwp-layer { background: #1a2e1a; border: 1px solid #16a34a; }
+.sa-kernel-layer { background: #2d1a00; border: 1px solid #b45309; }
+.sa-threads-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.sa-thread { width: 72px; height: 64px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.82rem; font-weight: 700; border: 2px solid transparent; cursor: default; transition: all .35s; position: relative; }
+.sa-thread .th-name { font-size: 1rem; font-weight: 900; }
+.sa-thread .th-state { font-size: 0.7rem; margin-top: 3px; opacity: .85; }
+.sa-thread.th-running { background: #14532d; border-color: #22c55e; box-shadow: 0 0 14px #22c55e55; }
+.sa-thread.th-ready { background: #1e3a5f; border-color: #3b82f6; }
+.sa-thread.th-waiting { background: #451a03; border-color: #f59e0b; }
+.sa-thread.th-blocked { background: #450a0a; border-color: #ef4444; }
+.sa-thread.th-idle { background: #1e293b; border-color: #334155; opacity: .45; }
+.sa-lwp { width: 90px; height: 52px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.82rem; font-weight: 700; border: 2px solid transparent; transition: all .35s; }
+.sa-lwp.lwp-busy { background: #14532d; border-color: #22c55e; }
+.sa-lwp.lwp-idle { background: #1e293b; border-color: #334155; opacity: .5; }
+.sa-kthread { width: 90px; height: 52px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.82rem; font-weight: 700; border: 2px solid transparent; transition: all .35s; }
+.sa-kthread.kt-busy { background: #7c2d12; border-color: #f97316; }
+.sa-kthread.kt-blocked { background: #1e293b; border-color: #334155; opacity: .5; }
+.sa-step-box { background: #0f172a; border-left: 4px solid var(--accent); border-radius: 0 12px 12px 0; padding: 16px 20px; min-height: 80px; transition: all .3s; }
+.sa-step-box .step-title { color: var(--accent2); font-weight: 800; font-size: 1rem; margin-bottom: 6px; }
+.sa-step-box .step-desc { font-size: 0.9rem; line-height: 1.65; color: var(--text); }
+.sa-step-box .step-keyword { background: #312e00; color: #fde68a; padding: 1px 7px; border-radius: 4px; font-weight: 700; font-size: 0.88rem; }
+.sa-nav { display: flex; align-items: center; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+.sa-step-indicators { display: flex; gap: 6px; flex: 1; flex-wrap: wrap; }
+.sa-dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); cursor: pointer; font-size: 0.75rem; font-weight: 800; display: flex; align-items: center; justify-content: center; color: var(--muted); transition: all .2s; }
+.sa-dot.active { background: var(--accent); border-color: var(--accent); color: white; }
+.sa-dot.done { background: var(--card2); border-color: var(--success); color: var(--success); }
+.sa-arrow-anim { position: absolute; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; animation: sa-pulse 0.8s ease-in-out infinite alternate; pointer-events: none; }
+@keyframes sa-pulse { from { opacity: .3; transform: scale(.85); } to { opacity: 1; transform: scale(1.1); } }
+.sa-msg-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-right: 6px; }
+.sa-before-after { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media(max-width:600px) { .sa-before-after { grid-template-columns: 1fr; } }
+ul, ol { padding-left: 20px; }
+li { margin-bottom: 4px; }
+.mt8 { margin-top: 8px; } .mt12 { margin-top: 12px; } .mt16 { margin-top: 16px; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-title">OS Midterm</div>
+    <button class="nav-btn active" onclick="goPage('home')">Overview</button>
+    <button class="nav-btn" onclick="goPage('ch1')">Ch1 Intro</button>
+    <button class="nav-btn" onclick="goPage('ch2')">Ch2 System</button>
+    <button class="nav-btn" onclick="goPage('ch3')">Ch3 Processes</button>
+    <button class="nav-btn" onclick="goPage('ch4')">Ch4 Threads</button>
+    <button class="nav-btn" onclick="goPage('ch5')">Ch5 Scheduling</button>
+    <button class="nav-btn" onclick="goPage('diagram')">Process States</button>
+    <button class="nav-btn" onclick="goPage('interrupt')">Interrupt</button>
+    <button class="nav-btn" onclick="goPage('flash')">Flashcards</button>
+    <button class="nav-btn" onclick="goPage('quiz')">Quiz</button>
+    <button class="nav-btn" onclick="goPage('sa')">Sched. Activation</button>
+  </div>
+</nav>
+
+<!-- ============================= HOME ============================= -->
+<div id="page-home" class="page active">
+  <h1 style="font-size:1.8rem;font-weight:900;margin-bottom:6px">Operating Systems Midterm Review</h1>
+  <p style="color:var(--muted);margin-bottom:24px">Ch1-Ch5 Complete Summary | 2011-2016 Past Exam Analysis</p>
+
+  <div class="warn-box">
+    <div class="warn-title">High-Frequency Must-Know Topics (Every Year!)</div>
+    <ul style="margin-top:8px">
+      <li><strong>Interrupt Mechanism &amp; I/O 7-Step Flowchart</strong> &rarr; <a onclick="goPage('interrupt')">Interactive Diagram</a></li>
+      <li><strong>API calling System Call</strong> (must mention: software interrupt / dual-mode / system call number / table of code pointer)</li>
+      <li><strong>Process States</strong> (scenario-based answers) &rarr; <a onclick="goPage('diagram')">Interactive Diagram</a></li>
+      <li><strong>fork() program output analysis, shared memory code fill-in</strong></li>
+      <li><strong>Thread model comparison</strong> (Many-to-One / One-to-One)</li>
+    </ul>
+  </div>
+
+  <div class="grid3" style="margin-top:16px">
+    <div class="card" style="border-left:4px solid var(--ch1);cursor:pointer" onclick="goPage('ch1')">
+      <div class="card-title">Ch1 Introduction</div>
+      <ul style="color:var(--muted);font-size:0.88rem">
+        <li>Interrupt Mechanism</li>
+        <li>Interrupt Vector Benefits</li>
+        <li>Device Controller vs Driver</li>
+        <li>Multiprogramming vs Time-sharing</li>
+        <li>Dual-Mode Operation</li>
+      </ul>
+    </div>
+    <div class="card" style="border-left:4px solid var(--ch2);cursor:pointer" onclick="goPage('ch2')">
+      <div class="card-title">Ch2 System Structures</div>
+      <ul style="color:var(--muted);font-size:0.88rem">
+        <li>System Call via API</li>
+        <li>CLI Two Implementation Methods</li>
+        <li>OS Structure Comparison (Layered/Microkernel/Modules)</li>
+        <li>Advantages of High-Level Language for OS</li>
+        <li>Three Parameter Passing Methods</li>
+      </ul>
+    </div>
+    <div class="card" style="border-left:4px solid var(--ch3);cursor:pointer" onclick="goPage('ch3')">
+      <div class="card-title">Ch3 Processes</div>
+      <ul style="color:var(--muted);font-size:0.88rem">
+        <li>Process States</li>
+        <li>fork()/exec()/wait() Programming</li>
+        <li>Shared Memory API</li>
+        <li>IPC Comparison</li>
+        <li>Shell Program Fill-in</li>
+      </ul>
+    </div>
+    <div class="card" style="border-left:4px solid var(--ch4);cursor:pointer" onclick="goPage('ch4')">
+      <div class="card-title">Ch4 Multithreaded</div>
+      <ul style="color:var(--muted);font-size:0.88rem">
+        <li>Thread vs Process (Why Cheaper)</li>
+        <li>Three Thread Model Comparison</li>
+        <li>Scheduler Activations</li>
+        <li>LWP</li>
+      </ul>
+    </div>
+    <div class="card" style="border-left:4px solid var(--ch5);cursor:pointer" onclick="goPage('ch5')">
+      <div class="card-title">Ch5 CPU Scheduling</div>
+      <ul style="color:var(--muted);font-size:0.88rem">
+        <li>Preemptive vs Non-preemptive (4 Cases)</li>
+        <li>FCFS / SJF / Priority / RR</li>
+        <li>Starvation + Aging</li>
+        <li>Multilevel Feedback Queue Gantt Chart</li>
+      </ul>
+    </div>
+    <div class="card" style="cursor:pointer" onclick="goPage('flash')">
+      <div class="card-title">Flashcard Practice</div>
+      <p style="color:var(--muted);font-size:0.88rem">40+ exam flashcards covering all high-frequency topics, test yourself as you review</p>
+    </div>
+  </div>
+
+  <div class="card mt16" onclick="goPage('quiz')" style="cursor:pointer;border-color:var(--warning)">
+    <div class="card-title" style="color:var(--warning)">Quiz Practice (2011-2016 Past Exam Adaptations)</div>
+    <p style="color:var(--muted);font-size:0.9rem">Interactive multiple choice + fill-in-the-blank, with detailed explanations after answering!</p>
+  </div>
+</div>
+
+<!-- ============================= CH1 ============================= -->
+<div id="page-ch1" class="page">
+  <div class="section-header" style="border-color:var(--ch1)">Chapter 1 &mdash; Introduction</div>
+
+  <div class="card">
+    <div class="card-title">Interrupt Mechanism <span class="badge badge-red">Must-Know</span></div>
+    <div class="grid2">
+      <div>
+        <p class="mt8"><strong>Key Terms:</strong></p>
+        <ul class="mt8">
+          <li><span class="hl">Interrupt-request line</span>: CPU checks this line after every instruction</li>
+          <li><span class="hl">Interrupt vector</span>: Table storing addresses of interrupt service routines (IVT)</li>
+          <li><span class="hl">Trap (software interrupt)</span>: Triggered by software errors or system calls</li>
+          <li><span class="hl">Interrupt handler</span>: Code that handles a specific interrupt</li>
+        </ul>
+      </div>
+      <div>
+        <div class="keybox">
+          <div class="keybox-title">Exam Must-Answer</div>
+          <p><strong>Benefits of Interrupt Vector:</strong></p>
+          <p>Directly look up the table to find the corresponding interrupt-specific handler, <strong>no need to search through</strong> all handlers one by one, speeding up interrupt processing</p>
+        </div>
+      </div>
+    </div>
+    <div class="warn-box mt12">
+      <div class="warn-title">Interrupt-based vs Busy-waiting (Polling)</div>
+      <div class="grid2" style="margin-top:8px">
+        <div>
+          <p><strong style="color:#fca5a5">Busy-waiting (Polling):</strong></p>
+          <p>CPU continuously loops checking if the device is ready, <strong>wastes a lot of CPU time</strong>, CPU remains idle for long periods</p>
+        </div>
+        <div>
+          <p><strong style="color:#86efac">Interrupt-based:</strong></p>
+          <p>CPU continues executing other work, device sends interrupt only when done, <strong>high CPU utilization</strong></p>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:12px;text-align:center">
+      <button class="btn btn-primary" onclick="goPage('interrupt')">View Interactive Interrupt Flowchart</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Device Controller vs Device Driver</div>
+    <table class="tbl">
+      <tr><th>Comparison</th><th>Device Controller</th><th>Device Driver</th></tr>
+      <tr><td>Type</td><td>Hardware component</td><td>Software (part of OS)</td></tr>
+      <tr><td>Function</td><td>Controls actual device, has local buffer for data</td><td>Tells OS how to communicate with device controller</td></tr>
+      <tr><td>Location</td><td>Between device and CPU</td><td>Inside OS kernel</td></tr>
+      <tr><td>Exam Point</td><td>Read/write data stored in device</td><td>Provides unified interface for device communication</td></tr>
+    </table>
+    <div class="keybox mt12">
+      <div class="keybox-title">How does the OS support new devices?</div>
+      <p>&rarr; Install a new <strong>device driver</strong>, no need to modify the OS kernel</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Storage Hierarchy (Fastest to Slowest)</div>
+    <div style="display:flex;flex-direction:column;gap:4px;margin:8px 0">
+      <div style="background:#7c3aed;border-radius:6px;padding:8px 16px;text-align:center;font-weight:700">Registers (Fastest, Smallest, Most Expensive)</div>
+      <div style="background:#2563eb;border-radius:6px;padding:8px 16px;text-align:center;font-weight:700;margin:0 20px">Cache</div>
+      <div style="background:#0369a1;border-radius:6px;padding:8px 16px;text-align:center;font-weight:700;margin:0 40px">Main Memory (RAM)</div>
+      <div style="background:#0f766e;border-radius:6px;padding:8px 16px;text-align:center;font-weight:700;margin:0 60px">Electronic Disk (SSD)</div>
+      <div style="background:#15803d;border-radius:6px;padding:8px 16px;text-align:center;font-weight:700;margin:0 80px">Magnetic Disk (HDD)</div>
+      <div style="background:#4d7c0f;border-radius:6px;padding:8px 16px;text-align:center;font-weight:700;margin:0 100px">Optical Disk</div>
+      <div style="background:#365314;border-radius:6px;padding:8px 16px;text-align:center;font-weight:700;margin:0 120px">Magnetic Tapes (Slowest, Largest, Cheapest)</div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">Multiprogramming vs Time-sharing</div>
+      <table class="tbl">
+        <tr><th></th><th>Multiprogramming</th><th>Time-sharing</th></tr>
+        <tr><td>Purpose</td><td>Increase CPU utilization</td><td>Provide interactivity</td></tr>
+        <tr><td>Relation</td><td>Foundation</td><td><strong>Extension</strong> of Multiprogramming</td></tr>
+        <tr><td>Switching</td><td>Switch when waiting for I/O</td><td>Frequent switching (time quantum)</td></tr>
+        <tr><td>Interaction</td><td>Not required</td><td>Interactive, short response time</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">Dual-Mode Operation</div>
+      <div class="grid2">
+        <div style="background:#3b0764;border-radius:10px;padding:12px;text-align:center">
+          <div style="font-weight:700;color:#c4b5fd">Kernel Mode</div>
+          <div style="color:var(--muted);font-size:0.82rem">mode bit = <strong>0</strong></div>
+          <div style="color:var(--muted);font-size:0.82rem;margin-top:4px">Can execute all instructions</div>
+        </div>
+        <div style="background:#1e3a5f;border-radius:10px;padding:12px;text-align:center">
+          <div style="font-weight:700;color:#93c5fd">User Mode</div>
+          <div style="color:var(--muted);font-size:0.82rem">mode bit = <strong>1</strong></div>
+          <div style="color:var(--muted);font-size:0.82rem;margin-top:4px">Cannot execute privileged instructions</div>
+        </div>
+      </div>
+      <div class="keybox mt12">
+        <div class="keybox-title">How does it protect the OS?</div>
+        <p>Privileged instructions can only execute in kernel mode. If user mode attempts to execute them &rarr; hardware trap &rarr; OS handles it, preventing malicious/erroneous programs from damaging the system</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= CH2 ============================= -->
+<div id="page-ch2" class="page">
+  <div class="section-header" style="border-color:var(--ch2)">Chapter 2 &mdash; System Structures</div>
+
+  <div class="card" style="border-color:var(--accent)">
+    <div class="card-title">System Call via API <span class="badge badge-red">Must-Know</span></div>
+    <div class="keybox">
+      <div class="keybox-title">4 Keywords You MUST Mention on the Exam</div>
+      <div class="grid2" style="margin-top:8px">
+        <div style="background:#0f172a;border-radius:8px;padding:12px;text-align:center">
+          <div style="color:#fde68a;font-weight:700">Software Interrupt</div>
+          <div style="color:var(--muted);font-size:0.82rem">Mechanism that triggers kernel intervention</div>
+        </div>
+        <div style="background:#0f172a;border-radius:8px;padding:12px;text-align:center">
+          <div style="color:#fde68a;font-weight:700">Dual-mode</div>
+          <div style="color:var(--muted);font-size:0.82rem">User mode &rarr; Kernel mode switch</div>
+        </div>
+        <div style="background:#0f172a;border-radius:8px;padding:12px;text-align:center">
+          <div style="color:#fde68a;font-weight:700">System Call Number (Index)</div>
+          <div style="color:var(--muted);font-size:0.82rem">Placed in EAX register</div>
+        </div>
+        <div style="background:#0f172a;border-radius:8px;padding:12px;text-align:center">
+          <div style="color:#fde68a;font-weight:700">Table of Code Pointer</div>
+          <div style="color:var(--muted);font-size:0.82rem">Look up table to find system call address</div>
+        </div>
+      </div>
+    </div>
+    <div class="mt12">
+      <p><strong>Complete Flow:</strong></p>
+      <ol class="step-list mt8">
+        <li>User program calls an API function (e.g., <code>read()</code>)</li>
+        <li>API function triggers <span class="hl">software interrupt (trap)</span>, CPU switches to <span class="hl">kernel mode</span> (dual-mode)</li>
+        <li>Places <span class="hl">system call number (index)</span> into EAX register</li>
+        <li>CPU uses index to look up <span class="hl">table of code pointer</span>, finds kernel function address</li>
+        <li>Executes the corresponding kernel service</li>
+        <li>After completion, CPU switches back to <span class="hl">user mode</span>, returns result</li>
+      </ol>
+    </div>
+    <div class="success-box mt12">
+      <div style="color:var(--success);font-weight:700;margin-bottom:6px">Why do programmers prefer API? (Must-Know)</div>
+      <ol>
+        <li><strong>Portability</strong>: API provides a consistent interface across different operating systems</li>
+        <li><strong>Simplicity</strong>: API is simpler than directly calling system calls, no need to understand low-level details</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">CLI Two Implementation Methods (2015 Exam)</div>
+    <div class="grid2">
+      <div style="background:var(--card2);border-radius:10px;padding:16px">
+        <div style="font-weight:700;color:var(--warning);margin-bottom:8px">Method 1: Built-in Commands</div>
+        <p style="font-size:0.88rem">Command code is <strong>built into the interpreter</strong></p>
+        <p style="color:var(--success);font-size:0.85rem;margin-top:8px">Pros: <strong>Fast</strong> execution</p>
+        <p style="color:var(--danger);font-size:0.85rem">Cons: Interpreter is <strong>large</strong>; rarely-used commands waste memory; adding commands requires modifying interpreter</p>
+      </div>
+      <div style="background:var(--card2);border-radius:10px;padding:16px">
+        <div style="font-weight:700;color:var(--accent2);margin-bottom:8px">Method 2: System Programs (UNIX approach)</div>
+        <p style="font-size:0.88rem">Interpreter contains no command code, searches PATH to find and <strong>load programs</strong></p>
+        <p style="color:var(--success);font-size:0.85rem;margin-top:8px">Pros: Interpreter is <strong>small</strong>; easy to add new commands</p>
+        <p style="color:var(--danger);font-size:0.85rem">Cons: Executing commands requires searching and loading, <strong>slower</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">OS Structure Comparison</div>
+    <table class="tbl">
+      <tr><th>Architecture</th><th>Description</th><th>Pros</th><th>Cons</th></tr>
+      <tr>
+        <td><strong>Layered</strong></td>
+        <td>OS divided into N layers, each layer only calls the layer below</td>
+        <td>Easy to <strong>debug</strong> (verify layer by layer)</td>
+        <td>Hard to define layers; poor performance (multi-layer overhead)</td>
+      </tr>
+      <tr>
+        <td><strong>Microkernel</strong></td>
+        <td>Only essential services in kernel, others moved to user space, communicate via message passing</td>
+        <td>Reliable, portable, secure</td>
+        <td><strong>High overhead</strong> (frequent message passing between user/kernel space)</td>
+      </tr>
+      <tr>
+        <td><strong>Modules (Modular)</strong> &mdash; Modern mainstream</td>
+        <td>Core kernel + dynamically loadable kernel modules (LKM)</td>
+        <td>Flexible, efficient (no message passing); modules can communicate directly</td>
+        <td>-</td>
+      </tr>
+    </table>
+    <div class="keybox mt12">
+      <div class="keybox-title">Modular is better than Layered and Microkernel (2013 Exam)</div>
+      <p>&bull; vs Layered: Modules can <strong>communicate directly</strong>, no need to traverse multiple layers, more efficient</p>
+      <p>&bull; vs Microkernel: Modules execute in kernel space, <strong>no message passing overhead</strong></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Three Methods for Passing System Call Parameters (2013, 2014 Exam)</div>
+    <div class="grid3">
+      <div style="background:var(--card2);border-radius:8px;padding:12px">
+        <div style="font-weight:700;color:var(--accent2)">1. Registers</div>
+        <p style="font-size:0.85rem;margin-top:6px;color:var(--muted)">Simplest, but parameter count is limited by number of registers</p>
+      </div>
+      <div style="background:var(--card2);border-radius:8px;padding:12px;border:1px solid var(--accent)">
+        <div style="font-weight:700;color:var(--accent2)">2. Memory Block (preferred)</div>
+        <p style="font-size:0.85rem;margin-top:6px;color:var(--muted)">Parameters stored in memory, address placed in register (Linux / Solaris); suitable for <strong>many</strong> parameters</p>
+      </div>
+      <div style="background:var(--card2);border-radius:8px;padding:12px">
+        <div style="font-weight:700;color:var(--accent2)">3. Stack</div>
+        <p style="font-size:0.85rem;margin-top:6px;color:var(--muted)">Parameters pushed onto stack, OS pops them from stack</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= CH3 ============================= -->
+<div id="page-ch3" class="page">
+  <div class="section-header" style="border-color:var(--ch3)">Chapter 3 &mdash; Processes</div>
+
+  <div class="card">
+    <div class="card-title">Process Memory Layout (Four Sections) (2014 Exam)</div>
+    <div class="grid2">
+      <table class="tbl">
+        <tr><th>Section</th><th>Content</th></tr>
+        <tr><td><span class="hl-blue">Text</span></td><td>Executable code</td></tr>
+        <tr><td><span class="hl-red">Data</span></td><td>Global variables</td></tr>
+        <tr><td><span class="hl-green">Heap</span></td><td>Dynamically allocated memory (malloc/new)</td></tr>
+        <tr><td><span class="hl">Stack</span></td><td>Local variables, function parameters, return addresses</td></tr>
+      </table>
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <div style="background:#1d4ed8;border-radius:4px;padding:6px 12px;font-size:0.85rem;font-weight:700">Stack (grows downward)</div>
+        <div style="background:#0f172a;border-radius:4px;padding:6px 12px;font-size:0.75rem;color:var(--muted);text-align:center">...free space...</div>
+        <div style="background:#065f46;border-radius:4px;padding:6px 12px;font-size:0.85rem;font-weight:700">Heap (grows upward)</div>
+        <div style="background:#92400e;border-radius:4px;padding:6px 12px;font-size:0.85rem;font-weight:700">Data</div>
+        <div style="background:#7f1d1d;border-radius:4px;padding:6px 12px;font-size:0.85rem;font-weight:700">Text (code)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Process States <span class="badge badge-red">Must-Know</span></div>
+    <p style="color:var(--muted);margin-bottom:12px">Click "Interactive Process State Diagram" for the full illustration</p>
+    <table class="tbl">
+      <tr><th>Scenario</th><th>State</th></tr>
+      <tr><td>Selected by long-term scheduler (admitted)</td><td><span class="hl-blue">ready</span></td></tr>
+      <tr><td><strong>Before</strong> being selected by short-term scheduler</td><td><span class="hl-blue">ready</span></td></tr>
+      <tr><td>After being selected (dispatched) by short-term scheduler</td><td><span class="hl-green">running</span></td></tr>
+      <tr><td><strong>Before</strong> calling a blocking system call</td><td><span class="hl-green">running</span></td></tr>
+      <tr><td><strong>After</strong> calling a blocking system call</td><td><span class="hl">waiting</span></td></tr>
+      <tr><td>After blocking system call <strong>completes</strong></td><td><span class="hl-blue">ready</span></td></tr>
+      <tr><td>After being interrupted by <strong>hardware interrupt</strong></td><td><span class="hl-blue">ready</span></td></tr>
+      <tr><td>After time slice <strong>expires</strong></td><td><span class="hl-blue">ready</span></td></tr>
+      <tr><td>Child process after fork()</td><td><span class="hl-blue">ready</span></td></tr>
+      <tr><td>After calling exit()</td><td><span class="hl-red">terminated</span></td></tr>
+    </table>
+    <div class="mt12" style="text-align:center">
+      <button class="btn btn-primary" onclick="goPage('diagram')">Interactive Process State Diagram</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Fork / Exec / Wait / Exit</div>
+    <div class="grid2">
+      <div>
+        <div class="code">
+<span class="kw">pid_t</span> pid = <span class="fn">fork</span>();
+<span class="cm">// Child returns 0</span>
+<span class="cm">// Parent returns child PID (>0)</span>
+<span class="cm">// Failure returns -1</span>
+
+<span class="kw">if</span> (pid == <span class="num">0</span>) {    <span class="cm">// Child process</span>
+  <span class="fn">execlp</span>(<span class="str">"ls"</span>, <span class="str">"ls"</span>, NULL);
+} <span class="kw">else</span> {               <span class="cm">// Parent process</span>
+  <span class="fn">wait</span>(NULL);          <span class="cm">// Wait for child</span>
+  <span class="fn">printf</span>(<span class="str">"done\n"</span>);
+}
+</div>
+      </div>
+      <div>
+        <div class="keybox">
+          <div class="keybox-title">Important Concepts</div>
+          <ul>
+            <li>After fork(), parent and child have <strong>separate copies of the address space</strong></li>
+            <li>Modifying variables in one <strong>does not affect the other</strong></li>
+            <li>Global variables are also independent copies</li>
+          </ul>
+        </div>
+        <div class="warn-box mt8">
+          <div class="warn-title">What happens if we remove wait(NULL)?</div>
+          <p>Parent and child execute concurrently, output order is non-deterministic; after child finishes, no one collects its status &rarr; <strong>Zombie process</strong></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">2016 Exam: fork() Output Analysis <span class="badge badge-orange">Must-Know</span></div>
+    <div class="grid2">
+      <div class="code">
+<span class="kw">int</span> value = <span class="num">5</span>;  <span class="cm">// global variable</span>
+<span class="kw">int</span> <span class="fn">main</span>() {
+  pid_t pid = <span class="fn">fork</span>();
+  <span class="kw">if</span> (pid > <span class="num">0</span>) {       <span class="cm">// Parent</span>
+    value += <span class="num">15</span>;
+    <span class="fn">wait</span>(NULL);
+    <span class="fn">printf</span>(<span class="str">"value=%d\n"</span>, value);
+  } <span class="kw">else if</span> (pid == <span class="num">0</span>) { <span class="cm">// Child</span>
+    value += <span class="num">5</span>;
+    <span class="fn">printf</span>(<span class="str">"value=%d\n"</span>, value);
+  }
+}
+      </div>
+      <div>
+        <div class="success-box">
+          <div style="color:var(--success);font-weight:700;margin-bottom:8px">Output:</div>
+          <p><strong>Child prints first:</strong> <code style="color:#86efac">value = 10</code> (5 + 5 = 10)</p>
+          <p><strong>Parent prints second:</strong> <code style="color:#86efac">value = 20</code> (5 + 15 = 20)</p>
+          <p style="color:var(--muted);margin-top:8px;font-size:0.85rem">Parent waits for wait() to complete before printing, so parent prints after child</p>
+        </div>
+        <div class="warn-box mt8">
+          <div class="warn-title">What if wait(NULL) is removed?</div>
+          <p>Output order is <strong>non-deterministic</strong>, child process may become a zombie process after termination</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Shared Memory API (System V) <span class="badge badge-red">Must-Know</span></div>
+    <div class="code">
+<span class="cm">// 1. Create/get shared memory</span>
+<span class="kw">int</span> segment_id = <span class="fn">shmget</span>(IPC_PRIVATE, sh_size, S_IRUSR | S_IWUSR);
+
+<span class="cm">// 2. Attach to process address space</span>
+<span class="kw">int</span> *shared_memory = (<span class="kw">int</span> *) <span class="fn">shmat</span>(segment_id, NULL, <span class="num">0</span>);
+
+<span class="cm">// 3. Use: operate like a normal pointer</span>
+*shared_memory = <span class="num">0</span>;  <span class="cm">// initialize</span>
+
+<span class="cm">// 4. Detach</span>
+<span class="fn">shmdt</span>(shared_memory);
+
+<span class="cm">// 5. Remove</span>
+<span class="fn">shmctl</span>(segment_id, IPC_RMID, NULL);
+    </div>
+
+    <div class="mt12">
+      <p><strong>Computing 2x+3y-5 (2015 Exam):</strong></p>
+      <div class="code mt8">
+<span class="kw">for</span> (i = <span class="num">2</span>; i > <span class="num">0</span>; i--) {    <span class="cm">// Create 2 child processes</span>
+  pid = <span class="fn">fork</span>();
+  <span class="kw">if</span> (pid == <span class="num">0</span>) {             <span class="cm">// Child process</span>
+    <span class="kw">if</span> (i == <span class="num">2</span>) *shared_memory += <span class="num">2</span> * x;  <span class="cm">// Compute 2x</span>
+    <span class="kw">if</span> (i == <span class="num">1</span>) *shared_memory += <span class="num">3</span> * y;  <span class="cm">// Compute 3y</span>
+    <span class="fn">shmdt</span>(shared_memory);
+    <span class="fn">exit</span>(<span class="num">0</span>);
+  } <span class="kw">else</span> { <span class="fn">wait</span>(NULL); }       <span class="cm">// Parent waits</span>
+}
+*shared_memory -= <span class="num">5</span>;            <span class="cm">// Compute -5</span>
+<span class="fn">printf</span>(<span class="str">"result=%d\n"</span>, *shared_memory);
+<span class="fn">shmdt</span>(shared_memory);
+<span class="fn">shmctl</span>(segment_id, IPC_RMID, NULL);
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Shell Program Fill-in (2013, 2016 Exam)</div>
+    <div class="code">
+<span class="kw">while</span> (<span class="fn">cin</span> >> inputBuffer) {    <span class="cm">// or !feof(stdin), true</span>
+  <span class="cm">// Step 1: Read command, if last char is '&' then background = true</span>
+
+  pid = <span class="fn">fork</span>();
+  <span class="kw">if</span> (pid == <span class="num">0</span>) {              <span class="cm">// Child process</span>
+    <span class="fn">exec</span>(inputBuffer);         <span class="cm">// Execute command</span>
+  } <span class="kw">else if</span> (pid > <span class="num">0</span>) {        <span class="cm">// Parent process</span>
+    <span class="kw">if</span> (background == <span class="kw">false</span>)
+      <span class="fn">wait</span>(NULL);              <span class="cm">// Foreground: wait for child</span>
+    <span class="cm">// Background: don't wait, continue</span>
+  }
+  <span class="fn">exit</span>(<span class="num">0</span>);                    <span class="cm">// Child process exits</span>
+}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Shared Memory vs Message Passing</div>
+    <table class="tbl">
+      <tr><th>Comparison</th><th>Shared Memory</th><th>Message Passing</th></tr>
+      <tr><td>Speed</td><td><strong>Fast</strong> (no kernel needed after setup)</td><td>Slower (system call each time)</td></tr>
+      <tr><td>Suitable for</td><td>Large amounts of data</td><td>Small data; distributed systems</td></tr>
+      <tr><td>Synchronization</td><td>Must handle yourself</td><td>OS provides mechanisms</td></tr>
+      <tr><td>Complexity</td><td>More complex</td><td>Simpler</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ============================= CH4 ============================= -->
+<div id="page-ch4" class="page">
+  <div class="section-header" style="border-color:var(--ch4)">Chapter 4 &mdash; Multithreaded Programming</div>
+
+  <div class="card">
+    <div class="card-title">Thread Concepts: Owned vs Shared</div>
+    <div class="grid2">
+      <div style="background:#3b0764;border-radius:10px;padding:16px">
+        <div style="font-weight:700;color:#c4b5fd;margin-bottom:8px">Each Thread Owns</div>
+        <ul>
+          <li>Thread ID</li>
+          <li>Program Counter</li>
+          <li>Register set</li>
+          <li>Stack</li>
+        </ul>
+      </div>
+      <div style="background:#1e3a5f;border-radius:10px;padding:16px">
+        <div style="font-weight:700;color:#93c5fd;margin-bottom:8px">Threads in Same Process Share</div>
+        <ul>
+          <li>Code (text section)</li>
+          <li>Data section</li>
+          <li>Open files</li>
+          <li>Heap</li>
+        </ul>
+      </div>
+    </div>
+    <div class="keybox mt12">
+      <div class="keybox-title">Why is Thread Creation Cheaper than Process Creation? (2015, 2016 Exam)</div>
+      <p>Creating a thread does not need to duplicate the entire address space (text/data/heap), only needs to create PC/registers/stack. In Solaris, thread creation is about <strong>30 times faster</strong> than process creation.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Thread Model Comparison <span class="badge badge-red">Must-Know</span></div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="background:var(--card2);border-radius:10px;padding:16px;border-left:4px solid #ef4444">
+        <div style="font-weight:700;font-size:1rem;margin-bottom:8px">Many-to-One</div>
+        <p style="font-size:0.88rem;color:var(--muted)">Multiple user threads &rarr; one kernel thread</p>
+        <p style="color:var(--success);font-size:0.85rem;margin-top:6px">Pros: Thread management in user space, efficient, no system call needed</p>
+        <p style="color:var(--danger);font-size:0.85rem">Cons: One thread making a blocking call &rarr; <strong>entire process blocks</strong>; cannot run in <strong>parallel</strong> on multiprocessors</p>
+      </div>
+      <div style="background:var(--card2);border-radius:10px;padding:16px;border-left:4px solid var(--success)">
+        <div style="font-weight:700;font-size:1rem;margin-bottom:8px">One-to-One (Linux / Windows)</div>
+        <p style="font-size:0.88rem;color:var(--muted)">Each user thread &rarr; one kernel thread</p>
+        <p style="color:var(--success);font-size:0.85rem;margin-top:6px">Pros: One thread blocking doesn't affect others; can <strong>truly run in parallel</strong> on multiprocessors</p>
+        <p style="color:var(--danger);font-size:0.85rem">Cons: Creating a user thread requires creating a kernel thread, <strong>high overhead</strong>; count may be limited</p>
+      </div>
+      <div style="background:var(--card2);border-radius:10px;padding:16px;border-left:4px solid var(--accent)">
+        <div style="font-weight:700;font-size:1rem;margin-bottom:8px">Many-to-Many</div>
+        <p style="font-size:0.88rem;color:var(--muted)">Multiple user threads &harr; multiple kernel threads (kernel threads &le; user threads)</p>
+        <p style="color:var(--success);font-size:0.85rem;margin-top:6px">Pros: Combines advantages of both; can create sufficient user threads; one blocking doesn't affect others</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Scheduler Activations <span class="badge badge-orange">2011-2014 Frequent</span></div>
+    <div class="keybox">
+      <div class="keybox-title">What problem does it solve?</div>
+      <p>In the Many-to-Many model, if a user thread makes a blocking system call, the kernel blocks the entire process. Scheduler Activations allow the kernel to immediately notify the thread library, letting the library schedule another thread.</p>
+    </div>
+    <div class="mt12">
+      <p><strong>LWP (Lightweight Process):</strong> A <strong>virtual processor</strong> between the kernel and thread library. The thread library schedules user threads on LWPs.</p>
+    </div>
+    <div class="mt12">
+      <p><strong>Operation Flow (Exam Must-Answer Steps):</strong></p>
+      <ol class="step-list mt8">
+        <li>User thread is about to make a <strong>blocking system call</strong></li>
+        <li>Kernel detects the upcoming block, notifies thread library via <span class="hl">upcall</span></li>
+        <li>Thread library's <span class="hl">upcall handler</span> saves the blocked thread's state</li>
+        <li>Thread library schedules <strong>another runnable user thread</strong> on an available LWP</li>
+        <li>When the blocking call completes, kernel sends another <span class="hl">upcall</span> to the thread library</li>
+        <li>Thread library marks the original thread as ready, reschedules it when appropriate</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= CH5 ============================= -->
+<div id="page-ch5" class="page">
+  <div class="section-header" style="border-color:var(--ch5)">Chapter 5 &mdash; CPU Scheduling</div>
+
+  <div class="card">
+    <div class="card-title">Scheduling Criteria</div>
+    <div class="grid2">
+      <div>
+        <p><strong>Maximize:</strong></p>
+        <ul class="mt8">
+          <li><span class="hl-green">CPU utilization</span>: Keep the CPU as busy as possible</li>
+          <li><span class="hl-green">Throughput</span>: Number of processes completed per time unit</li>
+        </ul>
+      </div>
+      <div>
+        <p><strong>Minimize:</strong></p>
+        <ul class="mt8">
+          <li><span class="hl-red">Turnaround time</span>: Time from submission to completion</li>
+          <li><span class="hl-red">Waiting time</span>: Total time waiting in ready queue</li>
+          <li><span class="hl-red">Response time</span>: Time from submission to first response</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Preemptive vs Non-preemptive Scheduling <span class="badge badge-orange">2014 Exam</span></div>
+    <table class="tbl">
+      <tr><th>Case</th><th>Scheduling Decision</th><th>Type</th></tr>
+      <tr><td>1. running &rarr; <strong>waiting</strong> (e.g., I/O request)</td><td>Must select a new process</td><td>Non-preemptive</td></tr>
+      <tr style="background:#172033"><td>2. running &rarr; <strong>ready</strong> (e.g., interrupt occurs)</td><td>May continue or switch</td><td><span class="hl">Preemptive</span></td></tr>
+      <tr style="background:#172033"><td>3. waiting &rarr; <strong>ready</strong> (e.g., I/O completes)</td><td>May switch to newly ready process</td><td><span class="hl">Preemptive</span></td></tr>
+      <tr><td>4. Process <strong>terminates</strong></td><td>Must select a new process</td><td>Non-preemptive</td></tr>
+    </table>
+    <p class="mt8" style="color:var(--muted);font-size:0.88rem">Cases 1 and 4 are inherently non-preemptive; cases 2 and 3 are the key points for <strong>preemptive scheduling</strong></p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Scheduling Algorithm Comparison</div>
+    <table class="tbl">
+      <tr><th>Algorithm</th><th>Description</th><th>Pros</th><th>Cons</th></tr>
+      <tr><td><strong>FCFS</strong></td><td>First-Come, First-Served, non-preemptive</td><td>Simple</td><td>Convoy Effect (short processes stuck behind long ones)</td></tr>
+      <tr><td><strong>SJF</strong></td><td>Shortest CPU burst first</td><td><strong>Optimal average waiting time</strong></td><td>Difficult to predict next burst length</td></tr>
+      <tr><td><strong>Priority</strong></td><td>Highest priority runs first</td><td>Flexible</td><td><strong>Starvation</strong>; solution: Aging</td></tr>
+      <tr><td><strong>Round-Robin</strong></td><td>Each process gets one time quantum in turn</td><td>Fair, good response time</td><td>Quantum too large &rarr; FCFS; too small &rarr; high overhead</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Multilevel Feedback Queue <span class="badge badge-red">2014, 2015 Must-Know</span></div>
+    <div class="grid2">
+      <div>
+        <p><strong>Three-Level Structure:</strong></p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+          <div style="background:#7c2d12;border-radius:8px;padding:12px;border-left:4px solid var(--ch1)">
+            <div style="font-weight:700">Q2 (Highest Priority)</div>
+            <div style="color:var(--muted);font-size:0.85rem">Round-Robin, time quantum = <strong>4 ms</strong></div>
+            <div style="color:#fdba74;font-size:0.82rem">New processes enter here</div>
+          </div>
+          <div style="background:#1e3a5f;border-radius:8px;padding:12px;border-left:4px solid var(--accent)">
+            <div style="font-weight:700">Q1 (Medium Priority)</div>
+            <div style="color:var(--muted);font-size:0.85rem">Round-Robin, time quantum = <strong>6 ms</strong></div>
+            <div style="color:#93c5fd;font-size:0.82rem">Demoted from Q2 after timeout</div>
+          </div>
+          <div style="background:#052e16;border-radius:8px;padding:12px;border-left:4px solid var(--success)">
+            <div style="font-weight:700">Q0 (Lowest Priority)</div>
+            <div style="color:var(--muted);font-size:0.85rem"><strong>FCFS</strong></div>
+            <div style="color:#86efac;font-size:0.82rem">Demoted from Q1 after timeout</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="keybox">
+          <div class="keybox-title">Rules</div>
+          <ul>
+            <li>New processes enter <strong>Q2</strong> (highest priority level)</li>
+            <li>If completed within quantum &rarr; leave CPU</li>
+            <li>If <strong>timeout (preempted)</strong> &rarr; demoted to next level</li>
+            <li>Higher priority level processes <strong>preempt</strong> lower level processes</li>
+          </ul>
+        </div>
+        <div class="warn-box mt8">
+          <div class="warn-title">Waiting Time Calculation</div>
+          <p>Waiting time = Completion time - Arrival time - Total CPU burst</p>
+          <p style="color:var(--muted);font-size:0.85rem;margin-top:4px">(Waiting time = time spent in ready queue, excluding I/O time)</p>
+        </div>
+        <div class="success-box mt8">
+          <div style="color:var(--success);font-weight:700">Starvation in Priority Scheduling</div>
+          <p>Solution: <strong>Aging</strong> &mdash; gradually increase the priority of a process as its waiting time increases, ensuring low-priority processes eventually get executed</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= DIAGRAM ============================= -->
+<div id="page-diagram" class="page">
+  <div class="section-header">Interactive Process State Diagram</div>
+  <p style="color:var(--muted);margin-bottom:16px">Click each state node to see its trigger conditions and description</p>
+
+  <div class="state-diagram" id="stateDiagram">
+    <svg viewBox="0 0 740 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;min-width:480px">
+      <defs>
+        <marker id="arr" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#64748b"/>
+        </marker>
+        <marker id="arr-b" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="#3b82f6"/>
+        </marker>
+      </defs>
+
+      <path d="M 128 128 L 165 94" stroke="#64748b" stroke-width="1.8" fill="none" marker-end="url(#arr)"/>
+      <text x="108" y="124" fill="#94a3b8" font-size="12" font-family="sans-serif">admitted</text>
+
+      <path d="M 278 88 L 362 88" stroke="#22c55e" stroke-width="1.8" fill="none" marker-end="url(#arr-b)" style="stroke:#22c55e"/>
+      <marker id="arr-g" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L9,3 z" fill="#22c55e"/>
+      </marker>
+      <path d="M 278 88 L 362 88" stroke="#22c55e" stroke-width="1.8" fill="none" marker-end="url(#arr-g)"/>
+      <text x="292" y="103" fill="#22c55e" font-size="12" font-family="sans-serif">dispatch</text>
+
+      <path d="M 368 72 Q 320 30 272 72" stroke="#64748b" stroke-width="1.8" fill="none" marker-end="url(#arr)"/>
+      <text x="286" y="46" fill="#94a3b8" font-size="12" font-family="sans-serif">interrupt</text>
+
+      <path d="M 478 80 L 548 80" stroke="#64748b" stroke-width="1.8" fill="none" marker-end="url(#arr)"/>
+      <text x="484" y="72" fill="#94a3b8" font-size="12" font-family="sans-serif">exit</text>
+
+      <path d="M 398 103 L 348 197" stroke="#f59e0b" stroke-width="1.8" fill="none" marker-end="url(#arr)" style="stroke:#f59e0b"/>
+      <marker id="arr-y" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+        <path d="M0,0 L0,6 L9,3 z" fill="#f59e0b"/>
+      </marker>
+      <path d="M 398 103 L 348 197" stroke="#f59e0b" stroke-width="1.8" fill="none" marker-end="url(#arr-y)"/>
+      <text x="397" y="162" fill="#f59e0b" font-size="12" font-family="sans-serif">I/O wait</text>
+
+      <path d="M 266 204 L 222 103" stroke="#64748b" stroke-width="1.8" fill="none" marker-end="url(#arr)"/>
+      <text x="218" y="170" fill="#94a3b8" font-size="12" font-family="sans-serif">I/O done</text>
+
+      <g class="state-node-g" id="snode-new" onclick="selectState('new')">
+        <ellipse cx="75" cy="150" rx="58" ry="26" fill="#5b21b6"/>
+        <text x="75" y="155" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="sans-serif">new</text>
+      </g>
+      <g class="state-node-g" id="snode-ready" onclick="selectState('ready')">
+        <ellipse cx="220" cy="80" rx="58" ry="26" fill="#1d4ed8"/>
+        <text x="220" y="85" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="sans-serif">ready</text>
+      </g>
+      <g class="state-node-g" id="snode-running" onclick="selectState('running')">
+        <ellipse cx="420" cy="80" rx="58" ry="26" fill="#065f46"/>
+        <text x="420" y="85" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="sans-serif">running</text>
+      </g>
+      <g class="state-node-g" id="snode-terminated" onclick="selectState('terminated')">
+        <ellipse cx="605" cy="80" rx="68" ry="26" fill="#7f1d1d"/>
+        <text x="605" y="85" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="sans-serif">terminated</text>
+      </g>
+      <g class="state-node-g" id="snode-waiting" onclick="selectState('waiting')">
+        <ellipse cx="320" cy="220" rx="58" ry="26" fill="#92400e"/>
+        <text x="320" y="225" text-anchor="middle" fill="white" font-size="14" font-weight="bold" font-family="sans-serif">waiting</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="state-info mt12" id="stateInfo">
+    <h4>Click a state node above to see its description</h4>
+    <p style="color:var(--muted)">Processes transition between states based on different events</p>
+  </div>
+
+  <div class="card mt16">
+    <div class="card-title">Quick Quiz: State for Each Scenario</div>
+    <div id="stateQuiz"></div>
+  </div>
+</div>
+
+<!-- ============================= INTERRUPT ============================= -->
+<div id="page-interrupt" class="page">
+  <div class="section-header">Interrupt-Driven I/O: 7-Step Flowchart</div>
+  <p style="color:var(--muted);margin-bottom:16px">Click each step for details, or use "Play Animation" to step through</p>
+
+  <div style="text-align:center;margin-bottom:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <button class="btn btn-primary" onclick="playInterrupt()">Play Animation</button>
+    <button class="btn btn-outline" onclick="resetInterrupt()">Reset</button>
+  </div>
+
+  <div style="background:var(--card2);border-radius:16px;padding:20px">
+    <div class="grid2" style="gap:40px">
+      <div>
+        <div style="text-align:center;font-weight:700;color:var(--accent2);padding:10px;background:var(--card);border-radius:8px;margin-bottom:8px">CPU</div>
+        <div class="int-box" id="ibox-vii" onclick="showStep('vii')">
+          <span class="step-num">vii</span>CPU receives interrupt signal, transfers control to interrupt handler
+        </div>
+        <div class="int-box" id="ibox-iii" onclick="showStep('iii')">
+          <span class="step-num">iii</span>CPU continues executing, checks interrupt-request line after each instruction
+        </div>
+        <div class="int-box" id="ibox-ii" onclick="showStep('ii')">
+          <span class="step-num">ii</span>Interrupt handler processes data, returns from interrupt
+        </div>
+        <div class="int-box" id="ibox-vi" onclick="showStep('vi')">
+          <span class="step-num">vi</span>CPU resumes execution of interrupted process
+        </div>
+      </div>
+      <div>
+        <div style="text-align:center;font-weight:700;color:var(--warning);padding:10px;background:var(--card);border-radius:8px;margin-bottom:8px">Device Controller</div>
+        <div class="int-box" id="ibox-iv" onclick="showStep('iv')">
+          <span class="step-num">iv</span>Device driver initiates I/O, sends command to device controller
+        </div>
+        <div class="int-box" id="ibox-v" onclick="showStep('v')">
+          <span class="step-num">v</span>Controller performs I/O operation (reads/writes device data)
+        </div>
+        <div class="int-box" id="ibox-i" onclick="showStep('i')">
+          <span class="step-num">i</span>I/O complete (Input ready / Output complete / Error) &rarr; generates interrupt signal
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="state-info mt12" id="interruptInfo">
+    <h4>Click a step to see its detailed description</h4>
+  </div>
+
+  <div class="card mt16">
+    <div class="card-title">Exam Fill-in (Correct Order)</div>
+    <p>CPU side flow (top to bottom): <span class="hl">iv</span> &rarr; <span class="hl">iii/continue execution</span> &rarr; <span class="hl">vii</span> &rarr; <span class="hl">ii</span> &rarr; <span class="hl">vi</span></p>
+    <p class="mt8">Device Controller side flow: <span class="hl">iv (receive command)</span> &rarr; <span class="hl">v (execute)</span> &rarr; <span class="hl">i (complete, send interrupt)</span></p>
+    <div class="warn-box mt12">
+      <div class="warn-title">Most Common Exam Ordering Question Answer</div>
+      <p>Seven steps by flowchart position:</p>
+      <p style="margin-top:6px"><strong>CPU left side (top to bottom):</strong> 7 &rarr; 3 &rarr; 2 &rarr; 6</p>
+      <p><strong>Device Controller right side (top to bottom):</strong> 4 &rarr; 5 &rarr; 1</p>
+      <p><strong>Arrow directions:</strong> CPU 4 &rarr; Device (initiate); Device 1 &rarr; CPU (interrupt signal)</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= FLASHCARDS ============================= -->
+<div id="page-flash" class="page">
+  <div class="section-header">Flashcard Practice</div>
+
+  <div class="pill-tabs" id="fcFilterTabs">
+    <div class="pill active" onclick="fcFilter('all')">All (40 cards)</div>
+    <div class="pill" onclick="fcFilter('ch1')">Ch1</div>
+    <div class="pill" onclick="fcFilter('ch2')">Ch2</div>
+    <div class="pill" onclick="fcFilter('ch3')">Ch3</div>
+    <div class="pill" onclick="fcFilter('ch4')">Ch4</div>
+    <div class="pill" onclick="fcFilter('ch5')">Ch5</div>
+    <div class="pill" onclick="fcFilter('code')">Code</div>
+  </div>
+
+  <div class="fc-stats">
+    <span id="fcCurrent">1</span>/<span id="fcTotal">40</span>
+    <span style="margin-left:auto;color:var(--success)" id="fcKnown">Mastered: 0</span>
+    <span style="color:var(--danger)" id="fcUnknown">Need Review: 0</span>
+  </div>
+  <div class="fc-progress-bar"><div class="fc-progress-fill" id="fcProgressBar" style="width:2.5%"></div></div>
+
+  <div class="fc-scene" onclick="flipCard()">
+    <div class="fc-card" id="fcCard">
+      <div class="fc-face fc-front">
+        <div class="fc-tag" id="fcTag">Ch1</div>
+        <div class="label">Question</div>
+        <div class="main" id="fcQ"></div>
+      </div>
+      <div class="fc-face fc-back">
+        <div class="label">Answer</div>
+        <div class="fc-answer" id="fcA"></div>
+        <div class="sub" id="fcNote"></div>
+      </div>
+    </div>
+  </div>
+  <div class="hint-text">Click card to flip | Or press Spacebar</div>
+
+  <div class="fc-controls mt12">
+    <button class="btn btn-outline" onclick="fcPrev()">Previous</button>
+    <button class="btn btn-danger" onclick="fcMark('unknown')">Don't Know</button>
+    <button class="btn btn-success" onclick="fcMark('known')">Mastered</button>
+    <button class="btn btn-outline" onclick="fcNext()">Next</button>
+  </div>
+  <div style="text-align:center;margin-top:12px">
+    <button class="btn btn-outline" onclick="fcShuffle()">Shuffle</button>
+    <button class="btn btn-outline" onclick="fcReset()">Reset Progress</button>
+  </div>
+</div>
+
+<!-- ============================= QUIZ ============================= -->
+<div id="page-quiz" class="page">
+  <div class="section-header">Quiz Practice (Past Exam Adaptations)</div>
+
+  <div id="quizContainer"></div>
+
+  <div style="text-align:center;margin-top:20px" id="quizSubmitRow">
+    <button class="btn btn-primary" onclick="submitQuiz()" id="quizSubmitBtn">Grade Answers</button>
+  </div>
+  <div id="quizResult"></div>
+</div>
+
+<!-- ============================= SCHEDULER ACTIVATION ============================= -->
+<div id="page-sa" class="page">
+  <div class="section-header">Scheduler Activations Interactive Diagram</div>
+  <p style="color:var(--muted);margin-bottom:20px">Step-by-step animation: understand how upcalls in the Many-to-Many model allow the thread library to respond to blocking events</p>
+
+  <div class="sa-before-after" style="margin-bottom:20px">
+    <div style="background:#450a0a;border:1px solid #ef4444;border-radius:12px;padding:16px">
+      <div style="color:#fca5a5;font-weight:800;margin-bottom:8px">Without Scheduler Activation</div>
+      <p style="font-size:0.88rem;color:#fecaca">T1 makes blocking system call &rarr; Kernel blocks entire kernel thread &rarr; LWP stops &rarr; <strong style="color:#fca5a5">T2, T3 all forced to wait</strong>, CPU wasted</p>
+    </div>
+    <div style="background:#052e16;border:1px solid #22c55e;border-radius:12px;padding:16px">
+      <div style="color:#86efac;font-weight:800;margin-bottom:8px">With Scheduler Activation</div>
+      <p style="font-size:0.88rem;color:#bbf7d0">Kernel notifies thread library via <strong style="color:#86efac">upcall</strong> &rarr; upcall handler saves T1 state &rarr; <strong style="color:#86efac">immediately schedules T2</strong>, no CPU waste</p>
+    </div>
+  </div>
+
+  <div class="sa-arena">
+    <div class="sa-layer sa-user-layer">
+      <div class="sa-layer-title" style="color:#818cf8">User Space &mdash; Thread Library</div>
+      <div class="sa-threads-row" id="sa-threads">
+        <div class="sa-thread th-running" id="sa-t1">
+          <div class="th-name">T1</div><div class="th-state" id="sa-t1-state">running</div>
+        </div>
+        <div class="sa-thread th-ready" id="sa-t2">
+          <div class="th-name">T2</div><div class="th-state" id="sa-t2-state">ready</div>
+        </div>
+        <div class="sa-thread th-ready" id="sa-t3">
+          <div class="th-name">T3</div><div class="th-state" id="sa-t3-state">ready</div>
+        </div>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:8px;padding:4px 12px;border-radius:8px;border:1px dashed #334155" id="sa-upcall-badge">
+          <span style="font-size:1.2rem" id="sa-upcall-icon">📭</span>
+          <div>
+            <div style="font-size:0.75rem;color:var(--muted)">Upcall Handler</div>
+            <div style="font-size:0.82rem;font-weight:700;color:var(--muted)" id="sa-upcall-status">Waiting</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;justify-content:flex-start;padding:0 16px;margin:-4px 0;z-index:2;position:relative">
+      <div style="width:90px;text-align:center;font-size:1.1rem" id="sa-arrow-ul1">⇅</div>
+      <div style="width:90px;text-align:center;font-size:1.1rem" id="sa-arrow-ul2" style="opacity:.3">⇅</div>
+    </div>
+
+    <div class="sa-layer sa-lwp-layer">
+      <div class="sa-layer-title" style="color:#4ade80">LWP (Lightweight Process &mdash; Virtual Processor)</div>
+      <div class="sa-threads-row">
+        <div class="sa-lwp lwp-busy" id="sa-lwp1">
+          <div style="font-size:0.75rem;font-weight:800">LWP 1</div>
+          <div style="font-size:0.78rem;color:#86efac" id="sa-lwp1-label">Running T1</div>
+        </div>
+        <div class="sa-lwp lwp-idle" id="sa-lwp2">
+          <div style="font-size:0.75rem;font-weight:800">LWP 2</div>
+          <div style="font-size:0.78rem;color:var(--muted)" id="sa-lwp2-label">Idle</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;justify-content:flex-start;padding:0 16px;margin:-4px 0;z-index:2;position:relative">
+      <div style="width:90px;text-align:center;font-size:1.1rem" id="sa-arrow-lk1">⇅</div>
+      <div style="width:90px;text-align:center;font-size:1.1rem;opacity:.3" id="sa-arrow-lk2">⇅</div>
+    </div>
+
+    <div class="sa-layer sa-kernel-layer">
+      <div class="sa-layer-title" style="color:#fb923c">Kernel Space</div>
+      <div class="sa-threads-row">
+        <div class="sa-kthread kt-busy" id="sa-kt1">
+          <div style="font-size:0.75rem;font-weight:800">Kernel Thread 1</div>
+          <div style="font-size:0.78rem;color:#fdba74" id="sa-kt1-label">Running LWP1</div>
+        </div>
+        <div class="sa-kthread kt-blocked" id="sa-kt2">
+          <div style="font-size:0.75rem;font-weight:800">Kernel Thread 2</div>
+          <div style="font-size:0.78rem;color:var(--muted)" id="sa-kt2-label">Idle</div>
+        </div>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:8px;padding:4px 12px;border-radius:8px;border:1px dashed #334155" id="sa-io-badge">
+          <span style="font-size:1.2rem" id="sa-io-icon">💿</span>
+          <div>
+            <div style="font-size:0.75rem;color:var(--muted)">I/O Device</div>
+            <div style="font-size:0.82rem;font-weight:700;color:var(--muted)" id="sa-io-status">Idle</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sa-step-box mt12" id="saStepBox">
+    <div class="step-title" id="saStepTitle">Initial State</div>
+    <div class="step-desc" id="saStepDesc">
+      T1 is running on <span class="step-keyword">LWP1 &rarr; Kernel Thread 1</span>.
+      T2 and T3 are waiting in the ready queue. System is operating normally.
+    </div>
+  </div>
+
+  <div class="sa-nav">
+    <button class="btn btn-outline" onclick="saPrev()" id="saBtnPrev" disabled>Previous</button>
+    <div class="sa-step-indicators" id="saDots"></div>
+    <button class="btn btn-primary" onclick="saNext()" id="saBtnNext">Next</button>
+  </div>
+  <div style="text-align:center;margin-top:10px">
+    <button class="btn btn-outline" onclick="saReset()">Start Over</button>
+    <button class="btn btn-outline" onclick="saAuto()" id="saBtnAuto" style="margin-left:8px">Auto Play</button>
+  </div>
+
+  <div class="grid2" style="margin-top:24px">
+    <div class="card">
+      <div class="card-title">Three Core Concepts</div>
+      <div class="timeline">
+        <div class="tl-item">
+          <h4>LWP (Lightweight Process)</h4>
+          <p>A <strong>virtual processor</strong> between the kernel and thread library. The thread library schedules user threads on LWPs; each LWP is backed by a kernel thread.</p>
+        </div>
+        <div class="tl-item">
+          <h4>Upcall</h4>
+          <p>A mechanism for the kernel to proactively notify the thread library (bottom-up). When a blocking event occurs or completes, the kernel uses an upcall so the thread library can respond.</p>
+        </div>
+        <div class="tl-item">
+          <h4>Upcall Handler</h4>
+          <p>A function in the thread library that receives and processes upcalls. Upon receiving an upcall, it saves the blocked thread's state and immediately schedules another ready thread.</p>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Exam Must-Answer Steps (8 Steps)</div>
+      <ol class="step-list" style="font-size:0.88rem">
+        <li>User thread T1 is about to make a blocking system call</li>
+        <li>Kernel detects that T1 is about to block</li>
+        <li>Kernel notifies thread library via <span class="hl">upcall #1</span></li>
+        <li><span class="hl">Upcall handler</span> saves T1's state</li>
+        <li>Thread library schedules another user thread (T2) on the LWP</li>
+        <li>T2 begins executing, T1 waits for I/O to complete</li>
+        <li>I/O completes, kernel notifies thread library via <span class="hl">upcall #2</span></li>
+        <li>Thread library marks T1 as <span class="hl">ready</span>, reschedules when appropriate</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== NAVIGATION =====
+function goPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  const btns = document.querySelectorAll('.nav-btn');
+  btns.forEach(b => { if (b.getAttribute('onclick') === `goPage('${id}')`) b.classList.add('active'); });
+  window.scrollTo(0, 0);
+  if (id === 'diagram') initStateQuiz();
+  if (id === 'flash') renderFlashcard();
+  if (id === 'quiz') renderQuiz();
+  if (id === 'sa') { saInitDots(); saRenderStep(saIndex); }
+}
+
+// ===== PROCESS STATE DIAGRAM =====
+const stateData = {
+  new: { color: '#5b21b6', title: 'New', desc: 'The process has just been created, e.g., fork() was just called. The system is initializing the PCB.', trans: '&rarr; <strong>ready</strong>: Selected by the long-term scheduler (admitted), loaded into memory' },
+  ready: { color: '#1d4ed8', title: 'Ready', desc: 'The process is in memory, waiting to be selected by the CPU scheduler. Multiple processes can be in the ready state simultaneously.', trans: '&rarr; <strong>running</strong>: Dispatched by the short-term scheduler' },
+  running: { color: '#065f46', title: 'Running', desc: 'The process is currently executing on the CPU. Each CPU can have <strong>only one</strong> process in this state at any time.', trans: '&rarr; <strong>waiting</strong>: Issued a blocking I/O or event wait<br>&rarr; <strong>ready</strong>: Preempted by interrupt, or time slice expired<br>&rarr; <strong>terminated</strong>: Called exit()' },
+  waiting: { color: '#92400e', title: 'Waiting', desc: 'The process is waiting for an event (e.g., I/O completion). It does not use the CPU while waiting.', trans: '&rarr; <strong>ready</strong>: The waited-for event (I/O) is complete' },
+  terminated: { color: '#7f1d1d', title: 'Terminated', desc: 'The process has finished execution or was killed. The OS reclaims its resources, but the PCB is retained (until the parent calls wait()).', trans: '(Final state, no transitions out)' }
+};
+
+function selectState(s) {
+  document.querySelectorAll('.state-node-g').forEach(n => n.classList.remove('active'));
+  const el = document.getElementById('snode-' + s);
+  if (el) el.classList.add('active');
+  const d = stateData[s];
+  document.getElementById('stateInfo').innerHTML = `<h4 style="color:${d.color}">${d.title}</h4><p style="margin:8px 0">${d.desc}</p><p style="color:var(--accent2);font-size:0.88rem"><strong>Transitions:</strong> ${d.trans}</p>`;
+}
+
+const stateQuizData = [
+  { q: 'After being selected by the long-term scheduler', a: 'ready' },
+  { q: 'Before being selected by the short-term scheduler', a: 'ready' },
+  { q: 'After being dispatched by the short-term scheduler', a: 'running' },
+  { q: 'After calling a blocking system call', a: 'waiting' },
+  { q: 'After the blocking system call completes', a: 'ready' },
+  { q: 'After being interrupted by a hardware interrupt', a: 'ready' },
+  { q: 'After the time slice expires', a: 'ready' },
+  { q: 'After calling exit()', a: 'terminated' },
+  { q: 'Child process created by fork()', a: 'ready' },
+  { q: 'Before calling a blocking system call', a: 'running' },
+];
+
+function initStateQuiz() {
+  const container = document.getElementById('stateQuiz');
+  if (container.innerHTML !== '') return;
+  const states = ['new', 'ready', 'running', 'waiting', 'terminated'];
+  container.innerHTML = stateQuizData.map((item, i) => `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap">
+      <span style="font-size:0.9rem;min-width:240px">${i+1}. ${item.q}</span>
+      <select id="sq${i}" style="background:var(--card2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:0.9rem">
+        <option value="">Select state</option>
+        ${states.map(s => `<option value="${s}">${s}</option>`).join('')}
+      </select>
+      <span id="sqr${i}" style="font-size:1rem"></span>
+    </div>
+  `).join('') + `<button class="btn btn-primary" onclick="checkStateQuiz()" style="margin-top:8px">Check Answers</button><div id="sqScore" style="margin-top:10px"></div>`;
+}
+
+function checkStateQuiz() {
+  let correct = 0;
+  stateQuizData.forEach((item, i) => {
+    const sel = document.getElementById('sq' + i);
+    const res = document.getElementById('sqr' + i);
+    if (sel.value === item.a) { res.textContent = '\u2705'; correct++; }
+    else { res.innerHTML = `\u274C <span style="color:#86efac">${item.a}</span>`; }
+  });
+  document.getElementById('sqScore').innerHTML = `<div style="padding:12px;background:var(--card2);border-radius:8px">Score: <strong style="font-size:1.2rem;color:${correct===stateQuizData.length?'var(--success)':'var(--warning)'}">${correct}/${stateQuizData.length}</strong></div>`;
+}
+
+// ===== INTERRUPT =====
+const intStepData = {
+  iv: { title: 'Step iv \u2014 Device Driver Initiates I/O', desc: 'Device driver sends a command to the device controller, requesting an I/O operation. The CPU can continue executing other code at this point.', color: 'var(--warning)' },
+  v:  { title: 'Step v \u2014 Controller Performs I/O', desc: 'Device controller performs the actual I/O operation (e.g., reads data from disk to local buffer).', color: 'var(--warning)' },
+  i:  { title: 'Step i \u2014 Generates Interrupt Signal', desc: 'I/O operation completes (Input ready / Output complete / Error), device controller raises an interrupt signal on the interrupt-request line.', color: 'var(--warning)' },
+  vii:{ title: 'Step vii \u2014 CPU Receives Interrupt', desc: 'After executing an instruction, CPU detects the signal on the interrupt-request line, saves current state, transfers control to interrupt handler (via interrupt vector table lookup).', color: 'var(--accent2)' },
+  iii:{ title: 'Step iii \u2014 CPU Continues and Checks', desc: 'CPU executes other instructions (e.g., the current process), automatically checking the interrupt-request line after each instruction, waiting for an interrupt signal.', color: 'var(--accent2)' },
+  ii: { title: 'Step ii \u2014 Interrupt Handler Processes', desc: 'Interrupt handler (ISR) saves CPU state, processes the interrupt (e.g., copies data from local buffer to main memory), then executes a return-from-interrupt instruction.', color: 'var(--accent2)' },
+  vi: { title: 'Step vi \u2014 CPU Resumes Interrupted Process', desc: 'After interrupt handling is complete, CPU restores the interrupted process\u2019s state (loaded from PCB), and resumes execution from the interruption point.', color: 'var(--accent2)' },
+};
+
+let intAnimTimer = null;
+const intOrder = ['iv', 'iii', 'v', 'vii', 'ii', 'i', 'vi'];
+
+function showStep(s) {
+  document.querySelectorAll('.int-box').forEach(b => b.classList.remove('lit'));
+  document.getElementById('ibox-' + s).classList.add('lit');
+  const d = intStepData[s];
+  document.getElementById('interruptInfo').innerHTML = `<h4 style="color:${d.color}">${d.title}</h4><p style="margin-top:8px">${d.desc}</p>`;
+}
+
+let intIdx = 0;
+function playInterrupt() {
+  clearInterval(intAnimTimer);
+  intIdx = 0;
+  document.querySelectorAll('.int-box').forEach(b => b.classList.remove('lit'));
+  intAnimTimer = setInterval(() => {
+    if (intIdx >= intOrder.length) { clearInterval(intAnimTimer); return; }
+    document.querySelectorAll('.int-box').forEach(b => b.classList.remove('lit'));
+    const step = intOrder[intIdx];
+    document.getElementById('ibox-' + step).classList.add('lit');
+    const d = intStepData[step];
+    document.getElementById('interruptInfo').innerHTML = `<h4 style="color:${d.color}">(${intIdx+1}/${intOrder.length}) ${d.title}</h4><p style="margin-top:8px">${d.desc}</p>`;
+    intIdx++;
+  }, 1800);
+}
+
+function resetInterrupt() {
+  clearInterval(intAnimTimer);
+  document.querySelectorAll('.int-box').forEach(b => b.classList.remove('lit'));
+  document.getElementById('interruptInfo').innerHTML = '<h4>Click a step to see its detailed description</h4>';
+}
+
+// ===== FLASHCARDS DATA =====
+const flashcards = [
+  // Ch1
+  { tag: 'ch1', q: 'Why is Interrupt-based I/O better than Busy-waiting?', a: 'Busy-waiting: CPU continuously polls, wastes a lot of CPU time, CPU remains idle.\nInterrupt-based: CPU continues other work, device sends interrupt when done, high CPU utilization.', note: '2011, 2013, 2014 Exam' },
+  { tag: 'ch1', q: 'What is the benefit of the Interrupt Vector Table?', a: 'Directly look up the table to find the corresponding interrupt-specific handler, no need to search through all handlers, speeds up interrupt processing.', note: '2011, 2013, 2014 Exam' },
+  { tag: 'ch1', q: 'What are the functions of Device Controller and Device Driver?', a: 'Device Controller (hardware): Reads/writes data stored in devices, has local buffer.\nDevice Driver (software): Tells OS how to communicate with device controller, provides unified interface.', note: '2013 Q2, 2015 Q1(a)' },
+  { tag: 'ch1', q: 'How does the OS support new devices?', a: 'By installing a new device driver; the OS core does not need modification to support new devices.', note: '2014 Q3, 2016 Q1(d)' },
+  { tag: 'ch1', q: 'Difference between Multiprogramming and Time-sharing?', a: 'Multiprogramming: Multiple processes in memory, goal is to increase CPU utilization, switch when waiting for I/O.\nTime-sharing: Extension of multiprogramming, goal is interactivity and short response time, uses time quantum.', note: '2011, 2012 Exam' },
+  { tag: 'ch1', q: 'How does Dual-mode protect the OS?', a: 'Privileged instructions can only execute in kernel mode (mode bit=0). If user mode tries to execute them, hardware triggers a trap, OS handles it, preventing malicious/erroneous programs from damaging the system.', note: '2012 Q1(d), 2013 Q3' },
+  { tag: 'ch1', q: 'Mode bit values: what do 0 and 1 represent?', a: 'mode bit = 0 \u2192 Kernel mode (can execute all instructions)\nmode bit = 1 \u2192 User mode (cannot execute privileged instructions)', note: '' },
+  { tag: 'ch1', q: 'When does the CPU switch from User mode to Kernel mode?', a: 'When: interrupt (hardware interrupt), trap (software interrupt/system call), or exception occurs, CPU switches to kernel mode.', note: '' },
+  // Ch2
+  { tag: 'ch2', q: 'What are the 4 keywords you must mention when describing API calling System Call?', a: '1. Software interrupt\n2. Dual-mode (mode switching)\n3. System call number (index)\n4. Table of code pointer', note: '2011-2016 Every year!' },
+  { tag: 'ch2', q: 'Describe the complete flow of API calling a system call', a: '1. API function triggers software interrupt (trap)\n2. CPU switches to kernel mode (dual-mode)\n3. System call number placed in EAX\n4. Look up table of code pointer to find address\n5. Execute kernel service\n6. Switch back to user mode, return result', note: 'Every year' },
+  { tag: 'ch2', q: 'Why do programmers prefer API over direct system calls?', a: '1. Portability: API provides consistent interface across different operating systems\n2. Simplicity: No need to understand low-level system call details', note: 'Every year' },
+  { tag: 'ch2', q: 'Comparison of CLI two implementation methods?', a: 'Built-in: Command code inside interpreter \u2192 fast but large size\nSystem program (UNIX): Search PATH and load \u2192 small size but requires search/load', note: '2015 Q3' },
+  { tag: 'ch2', q: 'Advantages of implementing OS in a high-level language?', a: '1. Easier to read and understand\n2. Code can be written more quickly\n3. Can use compiler/debugger\n4. OS is easier to port to other hardware platforms (portability) \u2605 most important', note: '2015 Q2' },
+  { tag: 'ch2', q: 'Pros and cons of Layered OS architecture?', a: 'Pros: Modular, easy to debug (verify layer by layer from bottom)\nCons: Hard to define layers correctly; poor performance (multi-layer overhead)', note: '2011, 2016 Exam' },
+  { tag: 'ch2', q: 'Pros and cons of Microkernel?', a: 'Pros: Reliable (one service crash doesn\'t affect kernel), portable, secure\nCons: High performance overhead (frequent message passing between user and kernel space)', note: '2012 Exam' },
+  { tag: 'ch2', q: 'Why is Modular kernel better than Layered and Microkernel?', a: 'vs Layered: Modules can communicate directly, no need to traverse multiple layers, more efficient\nvs Microkernel: Modules execute in kernel space, no message passing overhead', note: '2013 Q5' },
+  { tag: 'ch2', q: 'Appropriate method for passing "many" System Call parameters?', a: 'Use memory block or stack method (method 2 or 3).\nMemory block: Parameters stored in memory block, address placed in register (used by Linux/Solaris)', note: '2013, 2014 Exam' },
+  // Ch3
+  { tag: 'ch3', q: 'What are the four memory sections of a process?', a: 'Text: Executable code\nData: Global variables\nHeap: Dynamically allocated memory (malloc/new)\nStack: Local variables, function parameters, return addresses', note: '2014 Q5' },
+  { tag: 'ch3', q: 'Process state: what state after a blocking system call?', a: 'waiting', note: 'Every year' },
+  { tag: 'ch3', q: 'Process state: what state after a hardware interrupt?', a: 'ready\nNote: NOT waiting! The interrupt just pauses the process; it is still runnable', note: 'Every year \u26A0\uFE0F Common mistake' },
+  { tag: 'ch3', q: 'Process state: what state after time slice expires?', a: 'ready\nNote: NOT waiting! Time slice expiry just means preemption; the process is not waiting for any event', note: '\u26A0\uFE0F Common mistake' },
+  { tag: 'ch3', q: 'What does fork() return in parent? In child?', a: 'Parent: Returns child\'s PID (>0)\nChild: Returns 0\nFailure: Returns -1', note: 'Every year' },
+  { tag: 'ch3', q: 'Memory relationship between parent and child after fork()?', a: 'Parent and child each have independent copies of the address space. Modifying variables in one does not affect the other (including global variables)', note: 'Core concept' },
+  { tag: 'ch3', q: 'What happens if wait(NULL) is removed?', a: '1. Parent and child execute concurrently, output order is non-deterministic\n2. If no one calls wait() after child finishes, child becomes a zombie process', note: '2016 Q3(b)' },
+  { tag: 'ch3', q: 'Four shared memory functions and their purposes?', a: 'shmget: Create/get shared memory segment\nshmat: Attach to process address space\nshmdt: Detach\nshmctl(..., IPC_RMID, NULL): Remove shared memory segment', note: '2011-2015 Every year' },
+  { tag: 'ch3', q: 'Complete call format of shmget?', a: 'shmget(IPC_PRIVATE, sh_size, S_IRUSR | S_IWUSR)\n1st param: IPC_PRIVATE (private)\n2nd param: size (bytes)\n3rd param: permission flags', note: 'Common fill-in' },
+  { tag: 'ch3', q: 'Shared Memory vs Message Passing: which is faster and why?', a: 'Shared Memory is faster because after setup, processes can directly access shared data without going through the kernel, no system call overhead. Message Passing is slower as each communication needs a system call.', note: '' },
+  // Ch4
+  { tag: 'ch4', q: 'What does each thread own? What does it share with other threads in the same process?', a: 'Owns: Thread ID, Program Counter, Register set, Stack\nShares: Code (text), Data, Heap, Open files', note: '2016 Q4(a)' },
+  { tag: 'ch4', q: 'Why is thread creation cheaper than process creation?', a: 'Creating a thread doesn\'t need to duplicate the entire address space (text/data/heap).\nThread only needs Thread ID, PC, registers, stack; shares the rest.\nSolaris: Thread creation is about 30x faster than process creation.', note: '2015 Q6(a), 2016 Q4(a)' },
+  { tag: 'ch4', q: 'Pros and cons of Many-to-One thread model?', a: 'Pros: Thread management in user space, efficient, no system call needed\nCons: 1. One thread making a blocking call \u2192 entire process blocks 2. Cannot run in parallel on multiprocessors', note: '2013, 2015 Exam' },
+  { tag: 'ch4', q: 'Pros and cons of One-to-One thread model? Which OSes use it?', a: 'Pros: One thread blocking doesn\'t affect others; can truly run in parallel on multiprocessors\nCons: Each user thread requires a kernel thread, high overhead, count may be limited\nUsed by: Linux and Windows', note: '2013, 2015, 2016 Exam' },
+  { tag: 'ch4', q: 'What problem does Scheduler Activation solve? How does it work?', a: 'Problem: In M:M model, when a user thread makes a blocking call, kernel blocks the entire process\n\nSolution: thread about to block \u2192 kernel upcalls thread library \u2192 upcall handler saves state \u2192 schedules another thread \u2192 when blocking completes, kernel upcalls again \u2192 original thread returns to ready', note: '2011, 2012, 2014 Exam' },
+  { tag: 'ch4', q: 'What is LWP (Lightweight Process)?', a: 'LWP is an intermediary virtual processor between the kernel and thread library.\nThread library schedules user threads on LWPs.\nKernel notifies thread library (LWP) about blocking events via the upcall mechanism.', note: '2011, 2012 Exam' },
+  // Ch5
+  { tag: 'ch5', q: 'Four cases of preemptive scheduling? Which are preemptive?', a: '1. running\u2192waiting (I/O): Non-preemptive (must select)\n2. running\u2192ready (interrupt): Preemptive \u2605\n3. waiting\u2192ready (I/O done): Preemptive \u2605\n4. terminated: Non-preemptive (must select)\n\nCases 2 and 3 are the key preemptive points', note: '2014 Q7' },
+  { tag: 'ch5', q: 'Pros and cons of SJF scheduling?', a: 'Pros: Optimal (minimum) average waiting time\nCons: Difficult to predict next CPU burst length (cannot be accurately implemented)', note: '' },
+  { tag: 'ch5', q: 'Starvation problem in Priority Scheduling and its solution?', a: 'Problem (Starvation): Low-priority processes may never execute because high-priority processes keep arriving\nSolution (Aging): Gradually increase a process\'s priority as its waiting time increases, ensuring it eventually gets executed', note: '2015 Q7' },
+  { tag: 'ch5', q: 'Three-level structure of Multilevel Feedback Queue?', a: 'Q2 (highest): Round-Robin, time quantum = 4ms\nQ1 (middle): Round-Robin, time quantum = 6ms\nQ0 (lowest): FCFS\n\nNew processes enter Q2; demoted to next level after timeout', note: '2014, 2015 Exam' },
+  { tag: 'ch5', q: 'Formula for calculating Waiting Time?', a: 'Waiting time = Total time spent waiting in ready queue\n\n= Completion time - Arrival time - Total CPU burst length\n\n(Note: I/O waiting time is NOT included)', note: '2014, 2015 Gantt chart problems' },
+  // Code
+  { tag: 'code', q: '2016 Exam: What is the output of this fork() program?\n\nint value = 5;\npid = fork();\nif (pid > 0) { value += 15; wait(NULL); printf("value=%d\\n", value); }\nelse if (pid == 0) { value += 5; printf("value=%d\\n", value); }', a: 'Child prints first: value = 10 (5+5=10)\nParent prints second: value = 20 (5+15=20)\n\nKey: After fork(), parent and child have independent copies; modifications don\'t affect each other. Parent has wait(NULL) so it waits for child to finish before printing.', note: '2016 Q3(b)' },
+  { tag: 'code', q: 'Shared memory program framework for computing 2x+3y-5 (key steps)', a: 'shmget(IPC_PRIVATE, 4, S_IRUSR|S_IWUSR)\nshmat(segment_id, NULL, 0)\n*shared_memory = 0\nfor(i=2; i>0; i--){\n  fork()\n  if pid==0: compute 2x or 3y based on i\n  else: wait()\n}\n*shared_memory -= 5\nprintf result\nshmdt; shmctl(...IPC_RMID...)', note: '2015 Q9' },
+  { tag: 'code', q: 'Key structure for Shell program fill-in (2013, 2016)', a: 'while(cin >> inputBuffer) {\n  // 1. Read command, check for &\n  pid = fork();\n  if (pid == 0) {\n    exec(inputBuffer); // Execute command\n  } else if (pid > 0) {\n    if (!background) wait(NULL); // Foreground wait\n    // Background: don\'t wait\n  }\n  exit(0); // Child exits\n}', note: '2013 Q8, 2016 Q5' },
+];
+
+let fcFiltered = [...flashcards];
+let fcIndex = 0;
+let fcKnown = new Set();
+let fcUnknown = new Set();
+
+function fcFilter(tag) {
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  fcFiltered = tag === 'all' ? [...flashcards] : flashcards.filter(c => c.tag === tag);
+  fcIndex = 0;
+  document.getElementById('fcCard').classList.remove('flipped');
+  renderFlashcard();
+}
+
+function renderFlashcard() {
+  if (!fcFiltered.length) return;
+  const c = fcFiltered[fcIndex];
+  document.getElementById('fcQ').textContent = c.q;
+  document.getElementById('fcA').innerHTML = c.a.replace(/\n/g, '<br>');
+  document.getElementById('fcNote').textContent = c.note ? '\uD83D\uDCCC ' + c.note : '';
+  const tagMap = { ch1: 'Ch1', ch2: 'Ch2', ch3: 'Ch3', ch4: 'Ch4', ch5: 'Ch5', code: 'Code' };
+  document.getElementById('fcTag').textContent = tagMap[c.tag] || c.tag;
+  document.getElementById('fcCurrent').textContent = fcIndex + 1;
+  document.getElementById('fcTotal').textContent = fcFiltered.length;
+  document.getElementById('fcKnown').textContent = 'Mastered: ' + fcKnown.size;
+  document.getElementById('fcUnknown').textContent = 'Need Review: ' + fcUnknown.size;
+  document.getElementById('fcProgressBar').style.width = ((fcIndex + 1) / fcFiltered.length * 100) + '%';
+}
+
+function flipCard() {
+  document.getElementById('fcCard').classList.toggle('flipped');
+}
+function fcNext() {
+  document.getElementById('fcCard').classList.remove('flipped');
+  setTimeout(() => { fcIndex = (fcIndex + 1) % fcFiltered.length; renderFlashcard(); }, 100);
+}
+function fcPrev() {
+  document.getElementById('fcCard').classList.remove('flipped');
+  setTimeout(() => { fcIndex = (fcIndex - 1 + fcFiltered.length) % fcFiltered.length; renderFlashcard(); }, 100);
+}
+function fcMark(type) {
+  const key = fcFiltered[fcIndex].q.substring(0, 20);
+  if (type === 'known') { fcKnown.add(key); fcUnknown.delete(key); }
+  else { fcUnknown.add(key); fcKnown.delete(key); }
+  fcNext();
+}
+function fcShuffle() {
+  for (let i = fcFiltered.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [fcFiltered[i], fcFiltered[j]] = [fcFiltered[j], fcFiltered[i]];
+  }
+  fcIndex = 0;
+  document.getElementById('fcCard').classList.remove('flipped');
+  renderFlashcard();
+}
+function fcReset() {
+  fcKnown.clear(); fcUnknown.clear(); fcIndex = 0;
+  document.getElementById('fcCard').classList.remove('flipped');
+  renderFlashcard();
+}
+document.addEventListener('keydown', e => {
+  if (document.getElementById('page-flash').classList.contains('active')) {
+    if (e.key === ' ') { e.preventDefault(); flipCard(); }
+    if (e.key === 'ArrowRight') fcNext();
+    if (e.key === 'ArrowLeft') fcPrev();
+  }
+});
+
+// ===== QUIZ =====
+const quizData = [
+  {
+    type: 'mc',
+    q: 'After a process issues a blocking system call, what is its state?',
+    opts: ['ready', 'running', 'waiting', 'terminated'],
+    ans: 2,
+    explain: 'After a process issues a blocking system call, it must wait for I/O or an event to complete, so it enters the <strong>waiting</strong> state. It returns to the ready state only after the I/O is complete.'
+  },
+  {
+    type: 'mc',
+    q: 'After a process is interrupted by a hardware interrupt, what is its state?',
+    opts: ['waiting', 'running', 'terminated', 'ready'],
+    ans: 3,
+    explain: 'Tricky question! A hardware interrupt only temporarily preempts the CPU. The process is NOT waiting for any I/O event, so it enters the <strong>ready</strong> state (not waiting), waiting to be selected by the dispatcher again.'
+  },
+  {
+    type: 'mc',
+    q: 'Regarding API calling a system call, which statement is correct?',
+    opts: [
+      'API directly executes kernel functions in user mode',
+      'API triggers a software interrupt, CPU switches to kernel mode and looks up the table of code pointer',
+      'API does not need a system call number',
+      'API uses a hardware interrupt to trigger the kernel'
+    ],
+    ans: 1,
+    explain: 'The API function triggers a <strong>software interrupt (trap)</strong>, CPU switches to <strong>kernel mode</strong> (dual-mode), uses the <strong>system call number</strong> to look up the <strong>table of code pointer</strong> to find and execute the corresponding kernel function.'
+  },
+  {
+    type: 'mc',
+    q: 'Which thread model do Linux and Windows use?',
+    opts: ['Many-to-One', 'One-to-One', 'Many-to-Many', 'Two-Level'],
+    ans: 1,
+    explain: 'Linux and Windows both use the <strong>One-to-One</strong> model, where each user thread maps to one kernel thread, allowing true parallel execution, and one thread blocking does not affect others.'
+  },
+  {
+    type: 'mc',
+    q: 'What does fork() return in the child process?',
+    opts: ['Child\'s PID', 'Parent\'s PID', '0', '-1'],
+    ans: 2,
+    explain: 'fork() return values: <strong>returns 0 in the child process</strong>; returns the child\'s PID (>0) in the parent; returns -1 on failure. This is how the child identifies itself.'
+  },
+  {
+    type: 'mc',
+    q: 'How should the Starvation problem in Priority Scheduling be solved?',
+    opts: ['Use Round-Robin', 'Aging', 'Increase time quantum', 'FCFS'],
+    ans: 1,
+    explain: '<strong>Aging</strong>: Gradually increase a process\'s priority as its waiting time increases. This ensures that low-priority processes will eventually get CPU time, solving the starvation problem.'
+  },
+  {
+    type: 'mc',
+    q: 'In a Multilevel Feedback Queue, what causes a process to be demoted to a lower priority level?',
+    opts: ['Process completes I/O', 'Process finishes within the time quantum', 'Process\u2019s time quantum expires (preempted)', 'Process is interrupted'],
+    ans: 2,
+    explain: 'In a Multilevel Feedback Queue, if a process finishes within the time quantum \u2192 it leaves (to do I/O, etc.). If the <strong>time quantum expires</strong> (indicating it\'s a CPU-bound long process) \u2192 it is demoted to the next lower priority level.'
+  },
+  {
+    type: 'mc',
+    q: 'What is the main disadvantage of the Many-to-One thread model?',
+    opts: [
+      'Cannot create many user threads',
+      'One thread making a blocking system call causes the entire process to block',
+      'Requires many kernel threads',
+      'Thread creation is very slow'
+    ],
+    ans: 1,
+    explain: 'The main disadvantage of Many-to-One: Multiple user threads map to <strong>one</strong> kernel thread. When any user thread makes a blocking system call, the kernel blocks this kernel thread, causing <strong>all user threads in the entire process to block</strong>.'
+  },
+  {
+    type: 'mc',
+    q: 'Regarding the role of the Interrupt Vector, which is correct?',
+    opts: [
+      'Stores all process PCBs',
+      'Stores the address of each interrupt\'s handler, allowing CPU to quickly find the handler',
+      'Manages device driver loading',
+      'Controls the CPU mode bit'
+    ],
+    ans: 1,
+    explain: 'The <strong>Interrupt Vector Table</strong> stores the addresses of interrupt handlers (ISRs) for each interrupt type. After receiving an interrupt, the CPU uses the interrupt number to directly look up the address, <strong>no sequential searching needed</strong>, greatly speeding up interrupt handling.'
+  },
+  {
+    type: 'mc',
+    q: 'Which OS structure\'s main advantage is "easy to debug"?',
+    opts: ['Microkernel', 'Modules (Modular)', 'Layered', 'Simple'],
+    ans: 2,
+    explain: 'The <strong>Layered architecture</strong>\'s main advantage is easy debugging: you can verify from the lowest layer (Layer 0) upward. Each layer depends only on the one below it, so if there\'s a problem in a layer, you know it\'s that layer\'s issue.'
+  },
+  {
+    type: 'mc',
+    q: 'In which situation does preemptive scheduling occur?',
+    opts: [
+      'Process transitions from running to waiting (I/O request)',
+      'Process terminates',
+      'Process transitions from running to ready (interrupted)',
+      'Process transitions from new to ready'
+    ],
+    ans: 2,
+    explain: 'Preemption occurs in:\n2. running\u2192ready (interrupt) \u2605\n3. waiting\u2192ready (I/O complete) \u2605\n\nrunning\u2192waiting (I/O request) and terminated are voluntary CPU releases, which are inherently non-preemptive.'
+  },
+  {
+    type: 'mc',
+    q: 'Which statement about Shared Memory is correct?',
+    opts: [
+      'Shared Memory requires a system call for each communication',
+      'After setup, Shared Memory allows processes to directly access shared data without going through the kernel',
+      'Shared Memory is suitable for distributed systems',
+      'Shared Memory is harder to use than Message Passing'
+    ],
+    ans: 1,
+    explain: 'After <strong>Shared Memory</strong> is set up, processes can directly read and write the shared memory region <strong>without kernel intervention</strong> (no system calls), making it faster than Message Passing. The downside is that synchronization must be handled manually.'
+  },
+  {
+    type: 'fill',
+    q: 'Describe the complete operation flow of Scheduler Activation (must mention upcall, upcall handler, LWP):',
+    ans: 'User thread is about to make a blocking system call \u2192 kernel notifies thread library via upcall \u2192 upcall handler saves the blocked thread\'s state \u2192 schedules another runnable user thread on LWP \u2192 when blocking completes, kernel sends another upcall \u2192 original thread returns to ready state',
+    explain: 'Key terms: <strong>upcall</strong> (kernel\'s notification mechanism to thread library), <strong>upcall handler</strong> (function in thread library that processes upcalls), <strong>LWP</strong> (virtual processor between kernel and thread library)'
+  },
+  {
+    type: 'fill',
+    q: 'This code uses Shared Memory. Fill in the shmget and shmat calls:\nint segment_id = _____(IPC_PRIVATE, 4, S_IRUSR|S_IWUSR);\nint *shared_memory = (int *) _____(segment_id, NULL, 0);',
+    ans: 'shmget / shmat',
+    explain: '1. <strong>shmget(IPC_PRIVATE, size, permissions)</strong>: Creates a shared memory segment, returns segment_id\n2. <strong>shmat(segment_id, NULL, 0)</strong>: Attaches shared memory to the process\'s address space, returns a pointer'
+  },
+];
+
+let userAnswers = {};
+let quizSubmitted = false;
+
+function renderQuiz() {
+  const container = document.getElementById('quizContainer');
+  if (container.innerHTML !== '' && !quizSubmitted) return;
+  quizSubmitted = false;
+  userAnswers = {};
+  document.getElementById('quizResult').innerHTML = '';
+  document.getElementById('quizSubmitBtn').style.display = '';
+  document.getElementById('quizSubmitRow').style.display = '';
+
+  container.innerHTML = quizData.map((q, qi) => {
+    if (q.type === 'mc') {
+      return `<div class="quiz-q" id="qq${qi}">
+        <div class="qnum">Question ${qi+1} (Multiple Choice)</div>
+        <div class="qtext">${q.q.replace(/\n/g,'<br>')}</div>
+        <div class="quiz-options">
+          ${q.opts.map((o, oi) => `<div class="quiz-opt" id="qo${qi}_${oi}" onclick="selectOpt(${qi},${oi})">${String.fromCharCode(65+oi)}. ${o}</div>`).join('')}
+        </div>
+        <div class="quiz-explain" id="qex${qi}"></div>
+      </div>`;
+    } else {
+      return `<div class="quiz-q" id="qq${qi}">
+        <div class="qnum">Question ${qi+1} (Short Answer)</div>
+        <div class="qtext">${q.q.replace(/\n/g,'<br>')}</div>
+        <textarea class="fill-input" id="qfi${qi}" rows="4" placeholder="Enter your answer..."></textarea>
+        <div class="quiz-explain" id="qex${qi}" style="margin-top:8px"></div>
+      </div>`;
+    }
+  }).join('');
+}
+
+function selectOpt(qi, oi) {
+  if (quizSubmitted) return;
+  document.querySelectorAll(`[id^="qo${qi}_"]`).forEach(el => el.classList.remove('selected'));
+  document.getElementById(`qo${qi}_${oi}`).style.borderColor = 'var(--accent)';
+  document.getElementById(`qo${qi}_${oi}`).style.background = '#1e3a5f';
+  userAnswers[qi] = oi;
+}
+
+function submitQuiz() {
+  quizSubmitted = true;
+  let score = 0;
+  quizData.forEach((q, qi) => {
+    const exEl = document.getElementById('qex' + qi);
+    exEl.innerHTML = '<strong>Explanation:</strong> ' + q.explain.replace(/\n/g,'<br>');
+    exEl.classList.add('show');
+    if (q.type === 'mc') {
+      q.opts.forEach((o, oi) => {
+        const el = document.getElementById(`qo${qi}_${oi}`);
+        el.classList.add('disabled');
+        el.style.borderColor = '';
+        el.style.background = '';
+        if (oi === q.ans) el.classList.add('correct');
+        else if (userAnswers[qi] === oi && oi !== q.ans) el.classList.add('wrong');
+      });
+      if (userAnswers[qi] === q.ans) score++;
+    } else {
+      score += 0.5;
+    }
+  });
+  const mcQ = quizData.filter(q => q.type === 'mc').length;
+  document.getElementById('quizSubmitRow').style.display = 'none';
+  document.getElementById('quizResult').innerHTML = `
+    <div class="quiz-score" style="margin-top:20px">
+      <div style="color:var(--muted);font-size:0.9rem;margin-bottom:8px">Multiple Choice Score</div>
+      <div class="big-num">${Math.round(score)}/${mcQ}</div>
+      <div style="margin-top:12px;color:var(--muted)">${score >= mcQ*0.8 ? 'Great job! Keep it up!' : score >= mcQ*0.6 ? 'Not bad, review a few more key topics!' : 'Keep going! Go back and review the flashcards!'}</div>
+      <button class="btn btn-primary" style="margin-top:16px" onclick="quizSubmitted=false;renderQuiz()">Retake Quiz</button>
+    </div>`;
+}
+
+// ===== SCHEDULER ACTIVATION =====
+const saSteps = [
+  {
+    title: '1. Initial State',
+    desc: 'T1 is running on <span class="step-keyword">LWP1 \u2192 Kernel Thread 1</span>. T2 and T3 are waiting in the ready queue. System is operating normally, no blocking events.',
+    borderColor: 'var(--accent)',
+    apply: () => {
+      saThread('t1','running','running'); saThread('t2','ready','ready'); saThread('t3','ready','ready');
+      saLwp('lwp1','busy','Running T1'); saLwp('lwp2','idle','Idle');
+      saKt('kt1','busy','Running LWP1'); saKt('kt2','blocked','Idle');
+      saArrow('ul1','\u21C5','white'); saArrow('ul2','\u21C5','#334155');
+      saArrow('lk1','\u21C5','white'); saArrow('lk2','\u21C5','#334155');
+      saUpcall('\uD83D\uDCED','Waiting','var(--muted)'); saIo('\uD83D\uDCBF','Idle','var(--muted)');
+    }
+  },
+  {
+    title: '2. T1 Issues Blocking System Call',
+    desc: 'T1 calls a <span class="step-keyword">blocking system call</span> (e.g., read() waiting for disk data). T1 must wait for I/O to complete. Kernel begins processing the I/O request.',
+    borderColor: '#f59e0b',
+    apply: () => {
+      saThread('t1','waiting','blocking...'); saThread('t2','ready','ready'); saThread('t3','ready','ready');
+      saLwp('lwp1','busy','Waiting T1'); saLwp('lwp2','idle','Idle');
+      saKt('kt1','busy','Processing I/O'); saKt('kt2','blocked','Idle');
+      saArrow('ul1','\u2B07','#f59e0b'); saArrow('ul2','\u21C5','#334155');
+      saArrow('lk1','\u2B07','#f59e0b');
+      saUpcall('\uD83D\uDCED','Waiting','var(--muted)'); saIo('\uD83D\uDCBF','Processing I/O...','#f59e0b');
+    }
+  },
+  {
+    title: '3. Kernel Detects T1 is About to Block',
+    desc: 'Kernel detects that T1\'s blocking call will put Kernel Thread 1 into a wait state. <strong>Instead of blocking the entire LWP</strong>, the kernel first sends an upcall to notify the thread library.',
+    borderColor: '#a78bfa',
+    apply: () => {
+      saThread('t1','blocked','blocked'); saThread('t2','ready','ready'); saThread('t3','ready','ready');
+      saLwp('lwp1','busy','Awaiting upcall'); saLwp('lwp2','idle','Idle');
+      saKt('kt1','blocked','Sending upcall'); saKt('kt2','blocked','Idle');
+      saArrow('ul1','\u2B06','#a78bfa'); saArrow('ul2','\u21C5','#334155');
+      saArrow('lk1','\u2B06','#a78bfa');
+      saUpcall('\uD83D\uDCEC','Receiving upcall #1...','#a78bfa'); saIo('\uD83D\uDCBF','I/O in progress','#f59e0b');
+    }
+  },
+  {
+    title: '4. Kernel Sends Upcall #1 to Thread Library',
+    desc: 'Kernel sends <span class="step-keyword">upcall #1</span> to notify the thread library: "T1 is about to block." The thread library\'s <span class="step-keyword">upcall handler</span> is invoked.',
+    borderColor: '#a78bfa',
+    apply: () => {
+      saThread('t1','blocked','blocked'); saThread('t2','ready','ready'); saThread('t3','ready','ready');
+      saLwp('lwp1','busy','In upcall'); saLwp('lwp2','idle','Idle');
+      saKt('kt1','blocked','Waiting I/O'); saKt('kt2','blocked','Idle');
+      saArrow('ul1','\u2B06\u26A1','#a78bfa'); saArrow('ul2','\u21C5','#334155');
+      saArrow('lk1','\u2B06','#a78bfa');
+      saUpcall('\uD83D\uDCE3','Upcall #1 triggered!','#a78bfa'); saIo('\uD83D\uDCBF','I/O in progress','#f59e0b');
+    }
+  },
+  {
+    title: '5. Upcall Handler Saves T1 State',
+    desc: '<span class="step-keyword">Upcall handler</span> executes: (1) Saves T1\'s PC, registers, and state; (2) Marks T1 as <span class="step-keyword">blocked</span>; (3) Selects the next thread (T2) from the ready queue.',
+    borderColor: '#22c55e',
+    apply: () => {
+      saThread('t1','blocked','State saved'); saThread('t2','ready','About to run'); saThread('t3','ready','ready');
+      saLwp('lwp1','busy','Switching'); saLwp('lwp2','idle','Idle');
+      saKt('kt1','blocked','Waiting I/O'); saKt('kt2','blocked','Idle');
+      saArrow('ul1','\u2B07','#22c55e'); saArrow('ul2','\u21C5','#334155');
+      saArrow('lk1','\u2B06','#a78bfa');
+      saUpcall('\u2699\uFE0F','Save T1, select T2','#22c55e'); saIo('\uD83D\uDCBF','I/O in progress','#f59e0b');
+    }
+  },
+  {
+    title: '6. T2 Scheduled on LWP1',
+    desc: 'Thread library schedules T2 on <span class="step-keyword">LWP1</span>. <strong>CPU is not idle!</strong> T1 is blocked waiting for I/O, while T2 continues utilizing the CPU for meaningful work.',
+    borderColor: '#22c55e',
+    apply: () => {
+      saThread('t1','blocked','waiting I/O'); saThread('t2','running','running'); saThread('t3','ready','ready');
+      saLwp('lwp1','busy','Running T2'); saLwp('lwp2','idle','Idle');
+      saKt('kt1','blocked','Waiting I/O'); saKt('kt2','blocked','Idle');
+      saArrow('ul1','\u21C5','white'); saArrow('ul2','\u21C5','#334155');
+      saArrow('lk1','\u2B06','#a78bfa');
+      saUpcall('\u2705','T2 scheduled','#22c55e'); saIo('\uD83D\uDCBF','I/O in progress','#f59e0b');
+    }
+  },
+  {
+    title: '7. I/O Complete, Kernel Sends Upcall #2',
+    desc: 'T1\'s I/O operation is complete. Kernel sends <span class="step-keyword">upcall #2</span> to notify the thread library: "T1\'s blocking event is finished."',
+    borderColor: '#3b82f6',
+    apply: () => {
+      saThread('t1','blocked','I/O done!'); saThread('t2','running','running'); saThread('t3','ready','ready');
+      saLwp('lwp1','busy','Running T2'); saLwp('lwp2','idle','Idle');
+      saKt('kt1','busy','Sending upcall #2'); saKt('kt2','blocked','Idle');
+      saArrow('ul1','\u2B06\u26A1','#3b82f6'); saArrow('ul2','\u21C5','#334155');
+      saArrow('lk1','\u2B06','#3b82f6');
+      saUpcall('\uD83D\uDCE3','Upcall #2: I/O done','#3b82f6'); saIo('\u2705','I/O complete!','#22c55e');
+    }
+  },
+  {
+    title: '8. T1 Returns to Ready State',
+    desc: 'Upcall handler receives upcall #2 and marks T1 as <span class="step-keyword">ready</span>. T1 rejoins the ready queue and will resume execution from its breakpoint when scheduled by the thread library.',
+    borderColor: '#3b82f6',
+    apply: () => {
+      saThread('t1','ready','ready'); saThread('t2','running','running'); saThread('t3','ready','ready');
+      saLwp('lwp1','busy','Running T2'); saLwp('lwp2','idle','Idle');
+      saKt('kt1','busy','Running LWP1'); saKt('kt2','blocked','Idle');
+      saArrow('ul1','\u21C5','white'); saArrow('ul2','\u21C5','#334155');
+      saArrow('lk1','\u21C5','white');
+      saUpcall('\u2705','T1 back in ready queue','#3b82f6'); saIo('\u2705','Complete','#22c55e');
+    }
+  }
+];
+
+let saIndex = 0;
+let saAutoTimer = null;
+
+function saThread(id, cls, label) {
+  const el = document.getElementById('sa-' + id);
+  if (!el) return;
+  el.className = 'sa-thread th-' + cls;
+  el.querySelector('.th-state').textContent = label;
+}
+function saLwp(id, cls, label) {
+  const el = document.getElementById('sa-' + id);
+  if (!el) return;
+  el.className = 'sa-lwp lwp-' + cls;
+  document.getElementById('sa-' + id + '-label').textContent = label;
+}
+function saKt(id, cls, label) {
+  const el = document.getElementById('sa-' + id);
+  if (!el) return;
+  el.className = 'sa-kthread kt-' + cls;
+  document.getElementById('sa-' + id + '-label').textContent = label;
+}
+function saArrow(id, symbol, color) {
+  const el = document.getElementById('sa-arrow-' + id);
+  if (!el) return;
+  el.textContent = symbol;
+  el.style.color = color;
+  el.style.opacity = color === '#334155' ? '0.3' : '1';
+}
+function saUpcall(icon, status, color) {
+  document.getElementById('sa-upcall-icon').textContent = icon;
+  document.getElementById('sa-upcall-status').textContent = status;
+  document.getElementById('sa-upcall-status').style.color = color;
+}
+function saIo(icon, status, color) {
+  document.getElementById('sa-io-icon').textContent = icon;
+  document.getElementById('sa-io-status').textContent = status;
+  document.getElementById('sa-io-status').style.color = color;
+}
+
+function saRenderStep(idx) {
+  const s = saSteps[idx];
+  document.getElementById('saStepTitle').textContent = s.title;
+  document.getElementById('saStepDesc').innerHTML = s.desc;
+  document.getElementById('saStepBox').style.borderLeftColor = s.borderColor;
+  s.apply();
+  document.getElementById('saBtnPrev').disabled = idx === 0;
+  document.getElementById('saBtnNext').disabled = idx === saSteps.length - 1;
+  const dots = document.querySelectorAll('.sa-dot');
+  dots.forEach((d, i) => {
+    d.classList.remove('active', 'done');
+    if (i === idx) d.classList.add('active');
+    else if (i < idx) d.classList.add('done');
+  });
+}
+function saNext() {
+  if (saIndex < saSteps.length - 1) { saIndex++; saRenderStep(saIndex); }
+}
+function saPrev() {
+  if (saIndex > 0) { saIndex--; saRenderStep(saIndex); }
+}
+function saReset() {
+  clearInterval(saAutoTimer); saAutoTimer = null;
+  document.getElementById('saBtnAuto').textContent = 'Auto Play';
+  saIndex = 0; saRenderStep(0);
+}
+function saAuto() {
+  if (saAutoTimer) {
+    clearInterval(saAutoTimer); saAutoTimer = null;
+    document.getElementById('saBtnAuto').textContent = 'Auto Play';
+  } else {
+    document.getElementById('saBtnAuto').textContent = 'Pause';
+    saAutoTimer = setInterval(() => {
+      if (saIndex < saSteps.length - 1) { saIndex++; saRenderStep(saIndex); }
+      else { clearInterval(saAutoTimer); saAutoTimer = null; document.getElementById('saBtnAuto').textContent = 'Auto Play'; }
+    }, 2200);
+  }
+}
+function saInitDots() {
+  const container = document.getElementById('saDots');
+  if (container.children.length) return;
+  saSteps.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'sa-dot' + (i === 0 ? ' active' : '');
+    d.textContent = i + 1;
+    d.onclick = () => { saIndex = i; saRenderStep(i); };
+    container.appendChild(d);
+  });
+}
+
+// Init
+renderFlashcard();
+</script>
+</body>
+</html>
