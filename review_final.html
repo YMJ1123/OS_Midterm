@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚙️ 作業系統期末複習</title>
+<style>
+:root {
+  --bg: #0f172a; --card: #1e293b; --card2: #263347; --border: #334155;
+  --text: #e2e8f0; --muted: #94a3b8; --accent: #3b82f6; --accent2: #60a5fa;
+  --success: #22c55e; --warning: #f59e0b; --danger: #ef4444; --purple: #a78bfa;
+  --ch5: #f43f5e; --ch6: #06b6d4; --ch7: #f97316; --ch8: #10b981; --ch9: #a78bfa;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+a { color: var(--accent2); text-decoration: none; cursor: pointer; }
+
+.nav { background: #0a1628; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+.nav-inner { max-width: 1150px; margin: 0 auto; display: flex; align-items: center; gap: 4px; padding: 0 16px; overflow-x: auto; }
+.nav-title { font-weight: 700; font-size: 1.1rem; padding: 14px 12px 14px 0; color: var(--accent2); white-space: nowrap; border-right: 1px solid var(--border); margin-right: 8px; }
+.nav-btn { padding: 12px 13px; cursor: pointer; border: none; background: none; color: var(--muted); font-size: 0.86rem; font-weight: 500; white-space: nowrap; border-bottom: 3px solid transparent; transition: all .2s; }
+.nav-btn:hover { color: var(--text); }
+.nav-btn.active { color: var(--accent2); border-bottom-color: var(--accent2); }
+
+.page { display: none; max-width: 1150px; margin: 0 auto; padding: 24px 16px 80px; }
+.page.active { display: block; }
+
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+.card-title { font-size: 1rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.section-header { font-size: 1.3rem; font-weight: 800; margin: 28px 0 12px; padding-left: 12px; border-left: 4px solid var(--accent); }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+@media(max-width:760px) { .grid2,.grid3 { grid-template-columns: 1fr; } }
+
+.badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; }
+.badge-red { background: #7f1d1d; color: #fca5a5; }
+.badge-orange { background: #7c2d12; color: #fdba74; }
+.badge-yellow { background: #713f12; color: #fde68a; }
+.badge-green { background: #14532d; color: #86efac; }
+.badge-blue { background: #1e3a5f; color: #93c5fd; }
+.badge-purple { background: #3b0764; color: #c4b5fd; }
+
+.tbl { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.tbl th { background: var(--card2); padding: 10px 12px; text-align: left; color: var(--accent2); font-weight: 600; }
+.tbl td { padding: 9px 12px; border-top: 1px solid var(--border); vertical-align: top; }
+.tbl tr:hover td { background: #263347; }
+
+.keybox { background: #172033; border: 1px solid var(--accent); border-radius: 10px; padding: 16px; margin: 12px 0; }
+.keybox-title { color: var(--accent2); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; }
+.warn-box { background: #2d1a00; border: 1px solid var(--warning); border-radius: 10px; padding: 14px; margin: 12px 0; }
+.warn-title { color: var(--warning); font-weight: 700; font-size: 0.85rem; margin-bottom: 6px; }
+.success-box { background: #052e16; border: 1px solid var(--success); border-radius: 10px; padding: 14px; margin: 12px 0; }
+
+.code { background: #0d1b2e; border: 1px solid #2d3f55; border-radius: 8px; padding: 14px; font-family: 'Cascadia Code','Consolas',monospace; font-size: 0.84rem; line-height: 1.7; overflow-x: auto; white-space: pre; }
+.code .kw { color: #569cd6; } .code .fn { color: #dcdcaa; } .code .cm { color: #6a9955; }
+.code .str { color: #ce9178; } .code .num { color: #b5cea8; }
+
+.step-list { list-style: none; counter-reset: step; }
+.step-list li { counter-increment: step; display: flex; gap: 12px; margin-bottom: 10px; align-items: flex-start; }
+.step-list li::before { content: counter(step); background: var(--accent); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+
+.hl { background: #312e00; color: #fde68a; padding: 1px 6px; border-radius: 4px; font-weight: 700; }
+.hl-red { background: #3f0e0e; color: #fca5a5; padding: 1px 6px; border-radius: 4px; font-weight: 700; }
+.hl-green { background: #052e16; color: #86efac; padding: 1px 6px; border-radius: 4px; font-weight: 700; }
+.hl-blue { background: #1e3a5f; color: #93c5fd; padding: 1px 6px; border-radius: 4px; font-weight: 700; }
+p, li { line-height: 1.7; font-size: 0.93rem; }
+ul, ol { padding-left: 20px; } li { margin-bottom: 4px; }
+.mt8 { margin-top: 8px; } .mt12 { margin-top: 12px; } .mt16 { margin-top: 16px; }
+
+.btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all .15s; }
+.btn:active { transform: scale(.97); }
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: #2563eb; }
+.btn-success { background: #15803d; color: white; }
+.btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+.btn-outline:hover { background: var(--card2); }
+
+/* Gantt */
+.gantt { display:flex; border-radius:8px; overflow:hidden; border:1px solid var(--border); margin:10px 0; font-size:0.8rem; }
+.gantt .seg { padding:10px 4px; text-align:center; color:#fff; font-weight:700; border-right:1px solid #0f172a; position:relative; }
+.gantt .seg small { display:block; font-weight:400; opacity:.85; font-size:0.7rem; }
+
+/* Banker / Page table interactive */
+.matrix { width:100%; border-collapse:collapse; font-size:0.82rem; margin:6px 0; }
+.matrix th, .matrix td { border:1px solid var(--border); padding:5px 9px; text-align:center; }
+.matrix th { background:var(--card2); color:var(--accent2); }
+.matrix td.lab { background:#172033; color:var(--accent2); font-weight:700; }
+.bk-step { background:#0f172a; border-left:4px solid var(--accent); border-radius:0 10px 10px 0; padding:12px 16px; margin-top:10px; font-size:0.9rem; min-height:50px; }
+.bk-row-ok { background:#052e16 !important; }
+.bk-row-no { background:#2d1010 !important; }
+
+/* Page replacement viz */
+.pr-string { display:flex; flex-wrap:wrap; gap:4px; margin:10px 0; }
+.pr-ref { width:30px; height:30px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; background:var(--card2); border:1px solid var(--border); }
+.pr-ref.cur { border-color:var(--warning); background:#2d1e00; box-shadow:0 0 8px #f59e0b66; }
+.pr-frames { display:flex; gap:6px; margin:10px 0; }
+.pr-frame { width:46px; height:46px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.1rem; border:2px solid var(--border); background:var(--card2); transition:all .3s; }
+.pr-frame.fault { border-color:var(--danger); background:#450a0a; }
+.pr-frame.hit { border-color:var(--success); background:#052e16; }
+
+/* Flashcards */
+.fc-scene { perspective: 1000px; height: 240px; margin-bottom: 16px; cursor: pointer; }
+.fc-card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform .5s; }
+.fc-card.flipped { transform: rotateY(180deg); }
+.fc-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px; text-align: center; border: 1px solid var(--border); }
+.fc-front { background: linear-gradient(135deg, #1e3a5f, #1e293b); }
+.fc-back { background: linear-gradient(135deg, #052e16, #1e293b); transform: rotateY(180deg); }
+.fc-tag { background: var(--card2); padding: 2px 10px; border-radius: 20px; font-size: 0.76rem; color: var(--muted); margin-bottom: 12px; }
+.fc-face .main { font-size: 1.05rem; font-weight: 600; line-height: 1.6; }
+.fc-answer { font-size: 0.98rem; line-height: 1.6; color: #a7f3d0; }
+.fc-controls { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.fc-stats { display:flex; gap:16px; margin-bottom:14px; font-size:0.88rem; color:var(--muted); }
+
+/* Quiz */
+.quiz-q { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 18px; }
+.quiz-q .qnum { color: var(--muted); font-size: 0.82rem; margin-bottom: 8px; }
+.quiz-q .qtext { font-size: 1rem; font-weight: 600; margin-bottom: 14px; line-height: 1.6; }
+.quiz-opt { padding: 11px 15px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; transition: all .15s; font-size: 0.9rem; background: var(--card2); margin-bottom:8px; }
+.quiz-opt:hover:not(.disabled) { border-color: var(--accent); }
+.quiz-opt.correct { border-color: var(--success); background: #052e16; color: #86efac; }
+.quiz-opt.wrong { border-color: var(--danger); background: #450a0a; color: #fca5a5; }
+.quiz-opt.disabled { cursor: default; }
+.quiz-explain { background: #172033; border-left: 3px solid var(--accent); padding: 12px 16px; margin-top: 10px; border-radius: 0 8px 8px 0; font-size: 0.88rem; line-height: 1.6; display: none; }
+.quiz-explain.show { display: block; }
+.fill-input { width: 100%; padding: 9px; background: var(--card2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.9rem; margin-top: 6px; font-family:monospace; }
+.fill-input:focus { outline: none; border-color: var(--accent); }
+.pill-tabs { display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
+.pill { padding:6px 14px; border-radius:20px; border:1px solid var(--border); cursor:pointer; font-size:0.82rem; font-weight:600; color:var(--muted); background:var(--card2); }
+.pill.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-title">⚙️ OS 期末</div>
+    <button class="nav-btn active" onclick="goPage('home')">🏠 總覽</button>
+    <button class="nav-btn" onclick="goPage('ch5')">Ch5 排程</button>
+    <button class="nav-btn" onclick="goPage('ch6')">Ch6 同步</button>
+    <button class="nav-btn" onclick="goPage('ch7')">Ch7 死結</button>
+    <button class="nav-btn" onclick="goPage('ch8')">Ch8 記憶體</button>
+    <button class="nav-btn" onclick="goPage('ch9')">Ch9 虛擬記憶體</button>
+    <button class="nav-btn" onclick="goPage('banker')">🏦 銀行家</button>
+    <button class="nav-btn" onclick="goPage('pager')">📄 頁面置換</button>
+    <button class="nav-btn" onclick="goPage('flash')">🃏 閃卡</button>
+    <button class="nav-btn" onclick="goPage('quiz')">📝 考題</button>
+  </div>
+</nav>
+
+<!-- ============ HOME ============ -->
+<div id="page-home" class="page active">
+  <h1 style="font-size:1.8rem;font-weight:900;margin-bottom:6px">作業系統期末考複習</h1>
+  <p style="color:var(--muted);margin-bottom:20px">Ch5（排程演算法）– Ch9（虛擬記憶體）｜ 2011–2016 歷屆期末考分析</p>
+
+  <div class="warn-box">
+    <div class="warn-title">🔥 超高頻必考主題（幾乎每年都考！）</div>
+    <ul style="margin-top:8px">
+      <li><strong>多層反饋佇列甘特圖 + 平均等待時間</strong>（Ch5）</li>
+      <li><strong>銀行家演算法</strong>（請求可否批准 / 證明 unsafe）→ <a onclick="goPage('banker')">互動演算 🏦</a></li>
+      <li><strong>頁表大小計算 + 多層分頁填內容</strong>（Ch8）</li>
+      <li><strong>頁面置換 Optimal vs LRU</strong>（page fault 數）→ <a onclick="goPage('pager')">互動模擬 📄</a></li>
+      <li><strong>同步程式填空</strong>（Peterson / TestAndSet / Readers-Writers / Producer-Consumer）（Ch6）</li>
+    </ul>
+  </div>
+
+  <div class="grid3" style="margin-top:16px">
+    <div class="card" style="border-left:4px solid var(--ch5);cursor:pointer" onclick="goPage('ch5')">
+      <div class="card-title">🔴 Ch5 CPU 排程</div>
+      <ul style="color:var(--muted);font-size:0.86rem">
+        <li>FCFS/SJF/Priority/RR</li>
+        <li>多層反饋佇列甘特圖 ★★</li>
+        <li>多處理器 / Little's formula</li>
+        <li>Starvation + Aging</li>
+      </ul>
+    </div>
+    <div class="card" style="border-left:4px solid var(--ch6);cursor:pointer" onclick="goPage('ch6')">
+      <div class="card-title">🔵 Ch6 同步</div>
+      <ul style="color:var(--muted);font-size:0.86rem">
+        <li>臨界區三需求</li>
+        <li>Peterson / TestAndSet ★★</li>
+        <li>Semaphore / Readers-Writers ★★</li>
+        <li>Producer-Consumer / Monitor</li>
+      </ul>
+    </div>
+    <div class="card" style="border-left:4px solid var(--ch7);cursor:pointer" onclick="goPage('ch7')">
+      <div class="card-title">🟠 Ch7 死結</div>
+      <ul style="color:var(--muted);font-size:0.86rem">
+        <li>四個必要條件</li>
+        <li>銀行家演算法 ★★</li>
+        <li>Safe / Unsafe 狀態</li>
+        <li>預防 / 避免 / 偵測</li>
+      </ul>
+    </div>
+    <div class="card" style="border-left:4px solid var(--ch8);cursor:pointer" onclick="goPage('ch8')">
+      <div class="card-title">🟢 Ch8 記憶體管理</div>
+      <ul style="color:var(--muted);font-size:0.86rem">
+        <li>Address binding</li>
+        <li>分頁 + 頁表大小計算 ★★</li>
+        <li>TLB / 多層分頁 ★★</li>
+        <li>分段 / 碎裂</li>
+      </ul>
+    </div>
+    <div class="card" style="border-left:4px solid var(--ch9);cursor:pointer" onclick="goPage('ch9')">
+      <div class="card-title">🟣 Ch9 虛擬記憶體</div>
+      <ul style="color:var(--muted);font-size:0.86rem">
+        <li>需求分頁 / Page fault</li>
+        <li>頁面置換 FIFO/OPT/LRU ★★</li>
+        <li>Copy-on-write</li>
+        <li>Thrashing / Working set</li>
+      </ul>
+    </div>
+    <div class="card" style="cursor:pointer;border-color:var(--warning)" onclick="goPage('quiz')">
+      <div class="card-title" style="color:var(--warning)">📝 考題練習</div>
+      <p style="color:var(--muted);font-size:0.86rem">2011–2016 歷屆期末試題改編，互動選擇 + 填空，作答後顯示詳解。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CH5 ============ -->
+<div id="page-ch5" class="page">
+  <div class="section-header" style="border-color:var(--ch5)">🔴 Chapter 5 — CPU Scheduling</div>
+
+  <div class="card">
+    <div class="card-title">⏱️ 排程準則 & 演算法比較</div>
+    <table class="tbl">
+      <tr><th>演算法</th><th>搶占</th><th>優點</th><th>缺點</th></tr>
+      <tr><td><b>FCFS</b></td><td>非搶占</td><td>簡單</td><td><span class="hl-red">Convoy effect</span></td></tr>
+      <tr><td><b>SJF</b></td><td>可/非</td><td><span class="hl-green">平均等待最短(optimal)</span></td><td>無法預知 burst</td></tr>
+      <tr><td><b>Priority</b></td><td>可/非</td><td>靈活</td><td><span class="hl-red">Starvation</span> → Aging</td></tr>
+      <tr><td><b>Round-Robin</b></td><td>搶占</td><td>公平、response 好</td><td>quantum 大→FCFS；小→開銷大</td></tr>
+    </table>
+    <p class="mt8"><span class="hl">Waiting = Turnaround − CPU burst − I/O time</span>（排程只影響等待時間）</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 多層反饋佇列（Multilevel Feedback Queue）<span class="badge badge-red">2011/12/13 必考</span></div>
+    <div class="keybox">
+      <div class="keybox-title">考試標準設定 + 規則</div>
+      <p>Q2 最高：RR q=4ms（新行程/I/O 完成進此層）→ Q1：RR q=6ms → Q0：FCFS</p>
+      <ul class="mt8">
+        <li>高層行程<span class="hl">搶占</span>低層行程</li>
+        <li>用完 quantum 或被搶占 → <span class="hl">降一層</span></li>
+        <li>I/O 完成回來當作新到達 → 進 <span class="hl-blue">Q2</span>（會搶占低層）</li>
+      </ul>
+    </div>
+    <p class="mt12"><b>範例（2012/2013）：</b>P1 (CPU8,I/O4,CPU8) 到達 0；P2 (CPU2,I/O2,CPU16) 到達 2</p>
+    <div class="gantt mt8">
+      <div class="seg" style="flex:4;background:#be123c">P1<small>0–4 Q2</small></div>
+      <div class="seg" style="flex:2;background:#0e7490">P2<small>4–6 Q2</small></div>
+      <div class="seg" style="flex:2;background:#be123c">P1<small>6–8 Q1</small></div>
+      <div class="seg" style="flex:4;background:#0e7490">P2<small>8–12 Q2</small></div>
+      <div class="seg" style="flex:6;background:#0e7490">P2<small>12–18 Q1</small></div>
+      <div class="seg" style="flex:2;background:#be123c">P1<small>18–20 Q0</small></div>
+      <div class="seg" style="flex:4;background:#0e7490">P2<small>20–24 Q0</small></div>
+      <div class="seg" style="flex:4;background:#be123c">P1<small>24–28 Q2</small></div>
+      <div class="seg" style="flex:4;background:#be123c">P1<small>28–32 Q1</small></div>
+      <div class="seg" style="flex:2;background:#0e7490">P2<small>32–34 Q0</small></div>
+    </div>
+    <table class="tbl mt8">
+      <tr><th>行程</th><th>到達</th><th>完成</th><th>Turnaround</th><th>CPU</th><th>I/O</th><th>等待</th></tr>
+      <tr><td>P1</td><td>0</td><td>32</td><td>32</td><td>16</td><td>4</td><td><b>12</b></td></tr>
+      <tr><td>P2</td><td>2</td><td>34</td><td>32</td><td>18</td><td>2</td><td><b>12</b></td></tr>
+    </table>
+    <div class="success-box mt8">平均等待時間 = (12 + 12) / 2 = <b>12 ms</b></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">🖥️ 多處理器排程</div>
+      <ul>
+        <li><b>Asymmetric</b>：master 處理所有排程；<b>SMP</b>：各自排程（主流）</li>
+        <li><b>Processor affinity</b>：行程留在同處理器保 cache（soft/hard）</li>
+        <li>負載平衡：<span class="hl">Push migration</span>（kernel 推）+ <span class="hl">Pull migration</span>（閒置處理器拉）</li>
+        <li>注意：load balancing 與 affinity 互相抵觸</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">📐 演算法評估 & Little's Formula</div>
+      <p><b>Little's formula：</b><span class="hl">n = λ × W</span>（佇列長 = 到達率 × 等待時間）</p>
+      <ul class="mt8">
+        <li>Deterministic modeling：確切數字、僅適用該案例</li>
+        <li>Queueing models：用 Little's formula（分布常不切實際→結果存疑）</li>
+        <li>Simulations：trace tape，較準但昂貴</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CH6 ============ -->
+<div id="page-ch6" class="page">
+  <div class="section-header" style="border-color:var(--ch6)">🔵 Chapter 6 — Synchronization</div>
+
+  <div class="card">
+    <div class="card-title">🚦 臨界區三需求 + Race Condition</div>
+    <p><b>Race condition：</b>多行程同時存取共享資料，結果取決於存取順序（如 counter++ 與 counter-- 並行可能得 4/5/6）。</p>
+    <div class="grid3 mt8">
+      <div class="keybox"><div class="keybox-title">Mutual Exclusion</div>同時只有一個行程在臨界區</div>
+      <div class="keybox"><div class="keybox-title">Progress</div>沒人在臨界區時，想進的能在有限時間決定誰進</div>
+      <div class="keybox"><div class="keybox-title">Bounded Waiting</div>提出請求後，他人進入次數有上限</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔐 Peterson's Solution <span class="badge badge-red">2012 考</span></div>
+    <div class="code">do {
+    flag[i] = TRUE;                 <span class="cm">// 我想進入</span>
+    turn = j;                       <span class="cm">// 先讓你</span>
+    while (flag[j] && turn == j);   <span class="cm">// 你想進且輪到你→等</span>
+    <span class="cm">// CRITICAL SECTION</span>
+    flag[i] = FALSE;                <span class="cm">// 離開</span>
+    <span class="cm">// REMAINDER SECTION</span>
+} while (TRUE);</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚙️ 同步硬體 TestAndSet（n-process）<span class="badge badge-red">2011 考</span></div>
+    <div class="code">boolean TestAndSet(boolean *target){ boolean rv=*target; *target=TRUE; return rv; }
+<span class="cm">// shared: lock, waiting[n] = false</span>
+do {
+    waiting[i] = TRUE;  key = TRUE;
+    while (waiting[i] && key) key = TestAndSet(&lock);
+    waiting[i] = FALSE;
+    <span class="cm">// CRITICAL SECTION</span>
+    j = (i+1) % n;
+    while ((j!=i) && !waiting[j]) j = (j+1) % n;
+    if (j == i) lock = FALSE; else waiting[j] = FALSE;
+    <span class="cm">// REMAINDER SECTION</span>
+} while (TRUE);</div>
+    <p class="mt8"><span class="hl">Atomic = 不可中斷</span>。簡單版 TestAndSet 滿足互斥但<span class="hl-red">不滿足 bounded waiting</span>，故需 waiting[] 陣列版。</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🚥 Semaphore（號誌）</div>
+    <div class="grid2">
+      <div>
+        <div class="code">wait(S){ while(S<=0); S--; }
+signal(S){ S++; }</div>
+        <ul class="mt8">
+          <li><b>Binary semaphore</b> = mutex（0/1）</li>
+          <li><b>Counting semaphore</b> = 資源數</li>
+          <li><span class="hl-red">wait/signal 必須原子！</span></li>
+        </ul>
+      </div>
+      <div class="warn-box">
+        <div class="warn-title">號誌的三大問題</div>
+        <ul style="margin-top:6px">
+          <li><b>Deadlock</b>：互等對方號誌</li>
+          <li><b>Starvation</b>：LIFO 順序</li>
+          <li><b>Busy waiting (spinlock)</b>：浪費 CPU（多處理器短鎖有用）</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">🍽️ Bounded-Buffer（生產者-消費者）<span class="badge badge-red">2013 考</span></div>
+      <div class="code"><span class="cm">// mutex=1, empty=n, full=0</span>
+<span class="cm">// Producer</span>
+wait(empty); wait(mutex);
+  <span class="cm">// 放入 buffer</span>
+signal(mutex); signal(full);
+<span class="cm">// Consumer</span>
+wait(full); wait(mutex);
+  <span class="cm">// 取出 buffer</span>
+signal(mutex); signal(empty);</div>
+      <p class="mt8"><span class="hl-red">先 wait(empty/full)，再 wait(mutex)</span>，順序顛倒會死結！</p>
+    </div>
+    <div class="card">
+      <div class="card-title">📖 Readers-Writers（第一類）<span class="badge badge-red">2012/2016 考</span></div>
+      <div class="code"><span class="cm">// mutex=1, wrt=1, readcount=0</span>
+<span class="cm">// Reader</span>
+wait(mutex); readcount++;
+  if(readcount==1) wait(wrt);
+signal(mutex);
+  <span class="cm">// reading</span>
+wait(mutex); readcount--;
+  if(readcount==0) signal(wrt);
+signal(mutex);
+<span class="cm">// Writer</span>
+wait(wrt); <span class="cm">/*write*/</span> signal(wrt);</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🍴 Dining Philosophers & Monitor</div>
+    <div class="grid2">
+      <div>
+        <p><b>哲學家用餐：</b>5 人 5 筷，需左右兩支才能吃。直接用 semaphore <span class="hl-red">會死結</span>（全拿左筷）。</p>
+        <p class="mt8">解法：①最多 4 人上桌 ②兩支都可用才拿 ③奇偶先拿不同邊。<br><span class="hl">無死結 ≠ 無飢餓</span></p>
+      </div>
+      <div>
+        <p><b>Monitor：</b>同時只有一個行程活躍。Condition variable：x.wait()/x.signal()。</p>
+        <ul class="mt8">
+          <li><b>Signal and wait</b>：喚醒者先跑</li>
+          <li><b>Signal and continue</b>：發訊號者繼續</li>
+          <li>對比 semaphore：monitor 的 signal 無人等待時<b>無效</b></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CH7 ============ -->
+<div id="page-ch7" class="page">
+  <div class="section-header" style="border-color:var(--ch7)">🟠 Chapter 7 — Deadlocks</div>
+
+  <div class="card">
+    <div class="card-title">⛓️ 死結的四個必要條件（同時成立才死結）<span class="badge badge-red">2012/14/15 考</span></div>
+    <div class="grid2">
+      <div class="keybox"><div class="keybox-title">1. Mutual Exclusion</div>資源一次只能一個行程用</div>
+      <div class="keybox"><div class="keybox-title">2. Hold and Wait</div>持有資源又等其他資源</div>
+      <div class="keybox"><div class="keybox-title">3. No Preemption</div>資源只能自願釋放</div>
+      <div class="keybox"><div class="keybox-title">4. Circular Wait</div>行程形成等待環</div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">📈 資源配置圖（RAG）</div>
+      <ul>
+        <li>Request edge Pi→Rj；Assignment edge Rj→Pi</li>
+        <li><span class="hl-green">無環 → 一定無死結</span></li>
+        <li>有環 + 單一 instance → <span class="hl-red">死結</span></li>
+        <li>有環 + 多 instance → <span class="hl">不一定</span>死結</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">🛡️ 處理死結四方法</div>
+      <ol>
+        <li><b>Prevention</b>：破壞四條件之一</li>
+        <li><b>Avoidance</b>：銀行家演算法</li>
+        <li><b>Detection + Recovery</b></li>
+        <li><b>Ignore</b>：UNIX/Windows 採用</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔧 死結預防（破壞各條件）</div>
+    <table class="tbl">
+      <tr><th>破壞</th><th>方法</th></tr>
+      <tr><td>Hold & Wait</td><td>一開始請求全部 / 請求前先釋放所有 → 利用率低、飢餓</td></tr>
+      <tr><td>No Preemption</td><td>請求不到就釋放所有持有（適合記憶體類）</td></tr>
+      <tr><td><b>Circular Wait</b></td><td><span class="hl">資源排序</span> F:R→N，只能遞增順序請求</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🏦 死結避免：Safe / Unsafe 狀態 <span class="badge badge-red">2015/2016 必考觀念</span></div>
+    <div class="warn-box">
+      <div class="warn-title">⚠️ 最常考的觀念陷阱</div>
+      <p><span class="hl-green">Safe state</span> ⊂ 非死結　｜　<span class="hl-red">Deadlock</span> ⊂ Unsafe　｜　但 <span class="hl">Unsafe 不一定死結</span>！</p>
+      <p class="mt8">不安全只表示「無法保證避免死結」。若行程提早釋放資源或不索取到最大需求，仍可能順利完成。所以 <b>unsafe MAY BUT NOT NECESSARILY lead to deadlock</b>。</p>
+    </div>
+    <p class="mt8">👉 想親手演算銀行家？前往 <a onclick="goPage('banker')">🏦 銀行家互動演算</a></p>
+  </div>
+</div>
+
+<!-- ============ CH8 ============ -->
+<div id="page-ch8" class="page">
+  <div class="section-header" style="border-color:var(--ch8)">🟢 Chapter 8 — Memory-Management Strategies</div>
+
+  <div class="card">
+    <div class="card-title">🔗 Address Binding 三時機 <span class="badge badge-blue">2015 考</span></div>
+    <table class="tbl">
+      <tr><th>時機</th><th>產生</th><th>弱點</th></tr>
+      <tr><td>Compile time</td><td>絕對碼</td><td>位置變要<b>重編譯</b></td></tr>
+      <tr><td>Load time</td><td>可重定位碼</td><td>載入後<b>不能移動</b></td></tr>
+      <tr><td>Execution time</td><td>執行中可移動</td><td>需 <b>MMU</b>（通用 OS 採用）</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📑 分頁 (Paging) + 頁表大小計算 <span class="badge badge-red">每年必考</span></div>
+    <p>邏輯位址 = <span class="hl-blue">page number (p)</span> | <span class="hl">page offset (d)</span></p>
+    <div class="keybox mt8">
+      <div class="keybox-title">★ 頁表大小公式</div>
+      <div class="code">偏移位元 = log₂(頁大小)
+頁號位元 = 邏輯位址位元 − 偏移位元
+頁數 = 2^(頁號位元)
+頁表大小 = 頁數 × 每筆 entry 大小</div>
+      <p class="mt8"><span class="hl-red">實體記憶體大小不影響頁表筆數！</span>只看邏輯位址 + 頁大小。</p>
+    </div>
+    <table class="tbl mt8">
+      <tr><th>年份</th><th>邏輯</th><th>頁大小</th><th>偏移</th><th>頁號</th><th>頁數</th><th>頁表大小</th></tr>
+      <tr><td>2011/13/14/15</td><td>4-bit</td><td>4B</td><td>2</td><td>2</td><td>4</td><td><b>8 bytes</b></td></tr>
+      <tr><td>2012</td><td>4-bit</td><td>4B</td><td>2</td><td>2</td><td>4</td><td><b>8 bytes</b></td></tr>
+      <tr><td>2016</td><td>5-bit</td><td>4B</td><td>2</td><td>3</td><td>8</td><td><b>16 bytes</b></td></tr>
+    </table>
+    <p class="mt8">分頁<span class="hl-green">無外部碎裂</span>，但有<span class="hl">內部碎裂</span>（平均半頁/行程）。</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">⚡ TLB（轉譯後備緩衝區）</div>
+      <ul>
+        <li>頁表在主記憶體 → PTBR 指向 → <b>兩次存取</b>（慢）</li>
+        <li>TLB 快取 (頁號→frame號)，64~1024 筆</li>
+        <li><b>有效存取時間</b> = hit×(TLB+mem) + miss×(TLB+2mem)</li>
+        <li>例：80%命中,TLB20,mem100 → 0.8×120+0.2×220 = <b>140ns</b></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">🗂️ 頁表結構 & 分段</div>
+      <ul>
+        <li><b>Hierarchical</b>（多層）：頁表也分頁；64-bit 不適用</li>
+        <li><b>Hashed</b>：虛擬頁號雜湊</li>
+        <li><b>Inverted</b>：全系統一張，省記憶體但搜尋慢、難共享</li>
+        <li><b>Segmentation</b>：&lt;segment#, offset&gt;，有外部碎裂</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🧩 連續配置 & 碎裂</div>
+    <p><b>配置策略：</b>First-fit（最快）/ Best-fit（剩最小碎片）/ Worst-fit（最差）</p>
+    <ul class="mt8">
+      <li><b>External fragmentation</b>：總空間夠但不連續（50% 規則）→ <span class="hl">Compaction</span>（須執行時動態重定位）</li>
+      <li><b>Internal fragmentation</b>：固定分割配置略大於需求</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ CH9 ============ -->
+<div id="page-ch9" class="page">
+  <div class="section-header" style="border-color:var(--ch9)">🟣 Chapter 9 — Virtual Memory Management</div>
+
+  <div class="card">
+    <div class="card-title">📥 需求分頁 (Demand Paging) & Page Fault 流程 <span class="badge badge-red">2013/15/16 考</span></div>
+    <ol class="step-list">
+      <li>查內部表：合法 or 非法存取</li>
+      <li>非法 → 終止行程</li>
+      <li>合法但未載入 → 找 free frame（沒有則<b>頁面置換</b>）</li>
+      <li>檢查 victim <span class="hl">modify (dirty) bit</span>：改過才寫回磁碟</li>
+      <li>讀入該頁，更新頁表（valid bit）</li>
+      <li><b>重新執行</b>被中斷的指令</li>
+    </ol>
+    <div class="keybox mt8">
+      <div class="keybox-title">有效存取時間 (EAT)</div>
+      <div class="code">EAT = (1 − p) × ma + p × page_fault_time</div>
+      <p class="mt8">p = page fault 率。例：ma=200ns, fault=8ms → EAT = 200 + 7,999,800×p（p 須極小）</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔄 頁面置換演算法 <span class="badge badge-red">每年必考計算</span></div>
+    <table class="tbl">
+      <tr><th>演算法</th><th>規則</th><th>重點</th></tr>
+      <tr><td><b>FIFO</b></td><td>換最舊</td><td>簡單；有 <span class="hl-red">Belady's anomaly</span></td></tr>
+      <tr><td><b>Optimal</b></td><td>換未來最久不用</td><td><span class="hl-green">最低 fault</span>，需未來知識（不可實作）</td></tr>
+      <tr><td><b>LRU</b></td><td>換過去最久沒用</td><td>OPT 近似；stack 演算法<span class="hl-green">無 Belady's anomaly</span></td></tr>
+    </table>
+    <p class="mt8"><b>LRU 近似：</b>Reference bit、Second-chance (clock)、Enhanced second-chance ((ref,modify) 四類)。</p>
+    <p class="mt8">👉 想看 Optimal vs LRU 逐步動畫？前往 <a onclick="goPage('pager')">📄 頁面置換互動模擬</a></p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">📋 Copy-on-Write & 框架配置</div>
+      <ul>
+        <li><b>Copy-on-write</b>：fork 後父子共享頁，<span class="hl">寫入時才複製</span>（加速建立）</li>
+        <li><b>Equal allocation</b>：m/n 平均分</li>
+        <li><b>Proportional</b>：依行程大小比例</li>
+        <li><b>Global</b>（可搶別人 frame）vs <b>Local</b>（只用自己的）</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">🌀 Thrashing & Working Set</div>
+      <ul>
+        <li><b>Thrashing</b>：花在分頁比執行還多（frame 不足惡性循環）</li>
+        <li>解法：local replacement、給足夠 frame</li>
+        <li><b>Working set</b>：最近 Δ 次參考的頁集合 ≈ locality</li>
+        <li>Σ WSSᵢ &gt; 總 frame → 暫停一行程</li>
+        <li><b>PFF</b>：直接控制 page fault 率上下界</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============ BANKER ============ -->
+<div id="page-banker" class="page">
+  <div class="section-header" style="border-color:var(--accent)">🏦 銀行家演算法互動演算</div>
+  <div class="card">
+    <p>2011/2012/2014/2015 共同題：<b>SAFE 系統，能否批准 P1 的請求 (0,4,2,0)？</b></p>
+    <div class="grid2 mt8">
+      <div>
+        <p style="color:var(--muted);font-size:0.85rem">Allocation</p>
+        <table class="matrix" id="bk-alloc"></table>
+      </div>
+      <div>
+        <p style="color:var(--muted);font-size:0.85rem">Need = Max − Allocation</p>
+        <table class="matrix" id="bk-need"></table>
+      </div>
+    </div>
+    <p class="mt8" id="bk-avail" style="font-weight:700"></p>
+    <div class="fc-controls mt12">
+      <button class="btn btn-primary" onclick="bkStart()">▶ 開始演算</button>
+      <button class="btn btn-outline" onclick="bkNext()">下一步 →</button>
+      <button class="btn btn-outline" onclick="bkReset()">重設</button>
+    </div>
+    <div class="bk-step" id="bk-step">按「開始演算」逐步執行 Request → Safety algorithm。</div>
+  </div>
+</div>
+
+<!-- ============ PAGER ============ -->
+<div id="page-pager" class="page">
+  <div class="section-header" style="border-color:var(--accent)">📄 頁面置換互動模擬（Optimal vs LRU）</div>
+  <div class="card">
+    <p>歷屆共同題參考字串（4 frames）：<code>1 2 3 4 2 1 5 6 2 1 2 3 7 6 3 2 1 2 3 6</code></p>
+    <div class="pill-tabs mt12">
+      <div class="pill active" id="pill-opt" onclick="setAlgo('opt')">Optimal</div>
+      <div class="pill" id="pill-lru" onclick="setAlgo('lru')">LRU</div>
+    </div>
+    <div class="pr-string" id="pr-string"></div>
+    <p class="mt8" style="color:var(--muted);font-size:0.85rem">記憶體中的 frames：</p>
+    <div class="pr-frames" id="pr-frames"></div>
+    <div class="bk-step" id="pr-info">按「下一步」逐格模擬。紅 = page fault，綠 = hit。</div>
+    <div class="fc-controls mt12">
+      <button class="btn btn-primary" onclick="prNext()">下一步 →</button>
+      <button class="btn btn-success" onclick="prAll()">⏩ 跑完</button>
+      <button class="btn btn-outline" onclick="prReset()">重設</button>
+    </div>
+    <div class="success-box mt12" id="pr-result" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ============ FLASH ============ -->
+<div id="page-flash" class="page">
+  <div class="section-header" style="border-color:var(--accent)">🃏 考題閃卡</div>
+  <div class="fc-stats">
+    <span>進度：<b id="fc-idx">1</b> / <span id="fc-total">0</span></span>
+    <span>✅ 會：<b id="fc-know" style="color:var(--success)">0</b></span>
+    <span>❌ 不會：<b id="fc-dunno" style="color:var(--danger)">0</b></span>
+  </div>
+  <div class="fc-scene" id="fc-scene" onclick="fcFlip()">
+    <div class="fc-card" id="fc-card">
+      <div class="fc-face fc-front">
+        <div class="fc-tag" id="fc-tag">主題</div>
+        <div class="main" id="fc-q">問題</div>
+        <p style="color:var(--muted);font-size:0.8rem;margin-top:16px">點擊翻面看答案</p>
+      </div>
+      <div class="fc-face fc-back">
+        <div class="fc-answer" id="fc-a">答案</div>
+      </div>
+    </div>
+  </div>
+  <div class="fc-controls">
+    <button class="btn btn-danger" style="background:#b91c1c;color:#fff" onclick="fcMark(false)">❌ 不會</button>
+    <button class="btn btn-success" onclick="fcMark(true)">✅ 會了</button>
+    <button class="btn btn-outline" onclick="fcReset()">🔄 重來</button>
+  </div>
+</div>
+
+<!-- ============ QUIZ ============ -->
+<div id="page-quiz" class="page">
+  <div class="section-header" style="border-color:var(--warning)">📝 歷屆考題練習</div>
+  <div id="quiz-container"></div>
+  <div class="card" style="text-align:center">
+    <button class="btn btn-primary" onclick="quizScore()">查看得分</button>
+    <p id="quiz-result" class="mt12" style="font-size:1.2rem;font-weight:800"></p>
+  </div>
+</div>
+
+<script>
+function goPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  event && event.target && event.target.classList && event.target.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+/* ===== Banker's Algorithm ===== */
+const bkData = {
+  alloc: [[0,0,1,2],[1,0,0,0],[1,3,5,4],[0,6,3,2],[0,0,1,4]],
+  max:   [[0,0,1,2],[1,7,5,0],[2,3,5,6],[0,6,5,2],[0,6,5,6]],
+  avail: [1,5,2,0],
+  request: [0,4,2,0], reqProc: 1
+};
+function bkNeed(){ return bkData.alloc.map((a,i)=>a.map((v,j)=>bkData.max[i][j]-v)); }
+function renderMatrix(id, mat){
+  const need = bkNeed();
+  let h='<tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th></tr>';
+  mat.forEach((row,i)=>{ h+='<tr id="'+id+'-r'+i+'"><td class="lab">P'+i+'</td>'+row.map(v=>'<td>'+v+'</td>').join('')+'</tr>'; });
+  document.getElementById(id).innerHTML=h;
+}
+let bkState=null;
+function bkRenderAll(){
+  renderMatrix('bk-alloc', bkData.alloc);
+  renderMatrix('bk-need', bkNeed());
+  document.getElementById('bk-avail').textContent='Available = ('+bkData.avail.join(', ')+')';
+}
+function bkStart(){
+  const need=bkNeed(), p=bkData.reqProc, req=bkData.request;
+  // step1
+  const s1 = req.every((v,j)=>v<=need[p][j]);
+  // step2
+  const s2 = req.every((v,j)=>v<=bkData.avail[j]);
+  if(!s1){ document.getElementById('bk-step').innerHTML='❌ Step1 失敗：Request 超過 Need'; return; }
+  if(!s2){ document.getElementById('bk-step').innerHTML='❌ Step2 失敗：資源不足，P'+p+' 必須等待'; return; }
+  const work = bkData.avail.map((v,j)=>v-req[j]);
+  const alloc = bkData.alloc.map((r,i)=> i===p ? r.map((v,j)=>v+req[j]) : r.slice());
+  const ndd = need.map((r,i)=> i===p ? r.map((v,j)=>v-req[j]) : r.slice());
+  bkState={work, alloc, need:ndd, finish:[false,false,false,false,false], seq:[], phase:'safety'};
+  document.getElementById('bk-step').innerHTML=
+    '✅ Step1: Request (0,4,2,0) ≤ Need₁ (0,7,5,0)<br>'+
+    '✅ Step2: Request (0,4,2,0) ≤ Available (1,5,2,0)<br>'+
+    '<b>Step3 假設配置：</b> Work = Available − Request = <span class="hl">('+work.join(',')+')</span>。按「下一步」跑安全演算法。';
+}
+function bkNext(){
+  if(!bkState){ document.getElementById('bk-step').innerHTML='請先按「開始演算」。'; return; }
+  document.querySelectorAll('#bk-need tr, #bk-alloc tr').forEach(r=>{r.classList.remove('bk-row-ok','bk-row-no');});
+  if(bkState.finish.every(f=>f)){
+    document.getElementById('bk-step').innerHTML='🎉 全部 Finish = true → <span class="hl-green">系統 SAFE</span>，安全序列 &lt;'+bkState.seq.map(i=>'P'+i).join(', ')+'&gt;。<br><b>結論：請求可以批准！</b>';
+    return;
+  }
+  // find a process
+  for(let i=0;i<5;i++){
+    if(!bkState.finish[i] && bkState.need[i].every((v,j)=>v<=bkState.work[j])){
+      const before=bkState.work.slice();
+      bkState.work=bkState.work.map((v,j)=>v+bkState.alloc[i][j]);
+      bkState.finish[i]=true; bkState.seq.push(i);
+      document.getElementById('bk-alloc-r'+i) && document.getElementById('bk-need-r'+i).classList.add('bk-row-ok');
+      document.getElementById('bk-step').innerHTML='✅ <b>P'+i+'</b>：Need ('+bkState.need[i].join(',')+') ≤ Work ('+before.join(',')+') → 完成！<br>Work = Work + Alloc'+i+' = <span class="hl">('+bkState.work.join(',')+')</span><br>目前安全序列：&lt;'+bkState.seq.map(x=>'P'+x).join(', ')+'&gt;';
+      return;
+    }
+  }
+  document.getElementById('bk-step').innerHTML='❌ 找不到可執行的行程 → <span class="hl-red">UNSAFE</span>（本題不會發生）。';
+}
+function bkReset(){ bkState=null; bkRenderAll(); document.getElementById('bk-step').textContent='按「開始演算」逐步執行。'; }
+bkRenderAll();
+
+/* ===== Page Replacement ===== */
+const prStr=[1,2,3,4,2,1,5,6,2,1,2,3,7,6,3,2,1,2,3,6];
+const FRAMES=4;
+let prAlgo='opt', prIdx=0, prFrames=[], prFaults=0, prRecency=[];
+function setAlgo(a){ prAlgo=a; document.getElementById('pill-opt').classList.toggle('active',a==='opt'); document.getElementById('pill-lru').classList.toggle('active',a==='lru'); prReset(); }
+function prRenderString(){
+  document.getElementById('pr-string').innerHTML=prStr.map((v,i)=>'<div class="pr-ref'+(i===prIdx?' cur':'')+'">'+v+'</div>').join('');
+}
+function prRenderFrames(state){
+  let h='';
+  for(let i=0;i<FRAMES;i++){
+    const v=prFrames[i]===undefined?'':prFrames[i];
+    let cls=''; if(state==='fault'&&i===prFrames.length-1) cls=' fault';
+    h+='<div class="pr-frame'+cls+'">'+v+'</div>';
+  }
+  document.getElementById('pr-frames').innerHTML=h;
+}
+function prNext(){
+  if(prIdx>=prStr.length){ prFinish(); return; }
+  const pg=prStr[prIdx];
+  let msg='';
+  if(prFrames.includes(pg)){
+    msg='ref['+prIdx+'] = <b>'+pg+'</b> → <span class="hl-green">HIT</span>';
+    if(prAlgo==='lru'){ prRecency=prRecency.filter(x=>x!==pg); prRecency.push(pg); }
+  } else {
+    prFaults++;
+    if(prFrames.length<FRAMES){
+      prFrames.push(pg);
+      msg='ref['+prIdx+'] = <b>'+pg+'</b> → <span class="hl-red">FAULT</span>（放入空格）';
+    } else {
+      let victimIdx;
+      if(prAlgo==='opt'){
+        // farthest next use
+        let far=-1;
+        prFrames.forEach((f,idx)=>{
+          let nxt=Infinity;
+          for(let k=prIdx+1;k<prStr.length;k++){ if(prStr[k]===f){nxt=k;break;} }
+          if(nxt>far){ far=nxt; victimIdx=idx; }
+        });
+      } else {
+        const lru=prRecency[0];
+        victimIdx=prFrames.indexOf(lru);
+      }
+      const victim=prFrames[victimIdx];
+      prFrames[victimIdx]=pg;
+      if(prAlgo==='lru'){ prRecency=prRecency.filter(x=>x!==victim); }
+      msg='ref['+prIdx+'] = <b>'+pg+'</b> → <span class="hl-red">FAULT</span>（換掉 '+victim+'）';
+    }
+    if(prAlgo==='lru'){ prRecency=prRecency.filter(x=>x!==pg); prRecency.push(pg); }
+  }
+  prIdx++;
+  prRenderString(); prRenderFrames();
+  document.getElementById('pr-info').innerHTML=msg+'　｜　累計 page faults: <b>'+prFaults+'</b>';
+  if(prIdx>=prStr.length) prFinish();
+}
+function prAll(){ while(prIdx<prStr.length) prNext(); }
+function prFinish(){
+  const r=document.getElementById('pr-result');
+  r.style.display='block';
+  r.innerHTML=(prAlgo==='opt'?'Optimal':'LRU')+' 完成！共 <b>'+prFaults+'</b> 個 page fault。'+
+    (prAlgo==='opt'?'（標準答案 8）':'（標準答案 10）');
+}
+function prReset(){ prIdx=0; prFrames=[]; prFaults=0; prRecency=[]; prRenderString(); prRenderFrames(); document.getElementById('pr-info').innerHTML='按「下一步」逐格模擬。紅 = page fault，綠 = hit。'; document.getElementById('pr-result').style.display='none'; }
+prReset();
+
+/* ===== Flashcards ===== */
+const cards=[
+ {t:'Ch5 排程',q:'SJF 為何是 optimal？',a:'把短行程排前面，短行程減少的等待時間 > 長行程增加的等待時間 → 平均等待最小。'},
+ {t:'Ch5 排程',q:'多層反饋佇列：I/O 完成回來進哪一層？',a:'進最高層 Q2（當作新到達），會搶占低層行程。用完 quantum 或被搶占才降層。'},
+ {t:'Ch5 排程',q:'Starvation 如何解決？',a:'Aging（老化）：隨等待時間逐漸提高優先權，最終必被執行。'},
+ {t:'Ch5 排程',q:'Little\'s formula？',a:'n = λ × W（佇列長 = 到達率 × 平均等待時間）。'},
+ {t:'Ch5 排程',q:'負載平衡兩種方法？',a:'Push migration（kernel 推）與 Pull migration（閒置處理器拉）。'},
+ {t:'Ch6 同步',q:'臨界區三需求？',a:'Mutual Exclusion、Progress、Bounded Waiting。'},
+ {t:'Ch6 同步',q:'Bounded-buffer 中 wait 順序為何重要？',a:'必須先 wait(empty/full) 再 wait(mutex)，順序顛倒會死結。'},
+ {t:'Ch6 同步',q:'Readers-writers 第一個與最後一個 reader 做什麼？',a:'第一個 reader wait(wrt) 鎖住 writer；最後一個 reader signal(wrt) 放行。'},
+ {t:'Ch6 同步',q:'為何 semaphore 的 wait()/signal() 必須原子？',a:'否則 S-- 被拆解交錯執行，兩行程可能同時進入臨界區，破壞互斥。'},
+ {t:'Ch6 同步',q:'Monitor 兩種 signal 模型？',a:'Signal and wait（喚醒者先跑）、Signal and continue（發訊號者繼續）。'},
+ {t:'Ch6 同步',q:'哲學家用餐 naive 解的問題？',a:'死結（全部同時拿左筷）。解法：最多4人、兩支都可用才拿、奇偶不同邊。'},
+ {t:'Ch7 死結',q:'死結的四個必要條件？',a:'Mutual Exclusion、Hold and Wait、No Preemption、Circular Wait（四者同時成立）。'},
+ {t:'Ch7 死結',q:'資源配置圖有環一定死結嗎？',a:'單一 instance → 是；多 instance → 不一定。無環一定無死結。'},
+ {t:'Ch7 死結',q:'Unsafe 一定死結嗎？',a:'不一定！Deadlock ⊂ Unsafe，但 unsafe 只是可能死結（may but not necessarily）。'},
+ {t:'Ch7 死結',q:'如何用資源排序防止 circular wait？',a:'定義 F:R→N，只能遞增順序請求；反證得 F(R0)<F(R0) 矛盾，故無環。'},
+ {t:'Ch7 死結',q:'銀行家 Request 演算法三步？',a:'①Request≤Need ②Request≤Available ③假設配置跑安全演算法，安全才批准。'},
+ {t:'Ch8 記憶體',q:'頁表大小怎麼算？',a:'頁數 × 每筆大小；頁數 = 2^(邏輯位元 − 偏移位元)。實體記憶體大小不影響筆數！'},
+ {t:'Ch8 記憶體',q:'Address binding 三時機？',a:'Compile time（絕對碼）、Load time（可重定位）、Execution time（需MMU，可移動）。'},
+ {t:'Ch8 記憶體',q:'TLB 有效存取時間？',a:'hit×(TLB+mem) + miss×(TLB+2mem)。例 80%命中=0.8×120+0.2×220=140ns。'},
+ {t:'Ch8 記憶體',q:'分頁有哪種碎裂？',a:'無外部碎裂，有內部碎裂（最後一頁，平均半頁/行程）。'},
+ {t:'Ch8 記憶體',q:'Inverted page table 優缺？',a:'全系統一張表省記憶體，但搜尋慢、難實作共享記憶體。'},
+ {t:'Ch9 虛擬',q:'Optimal vs LRU 差別？',a:'Optimal 換未來最久不用（需未來知識）；LRU 換過去最久沒用（OPT 近似）。'},
+ {t:'Ch9 虛擬',q:'哪些演算法有 Belady\'s anomaly？',a:'FIFO 有；LRU、Optimal（stack 演算法）沒有。'},
+ {t:'Ch9 虛擬',q:'Modify (dirty) bit 作用？',a:'victim 被修改過才需寫回磁碟，否則直接覆蓋，省一次 I/O。'},
+ {t:'Ch9 虛擬',q:'Copy-on-write？',a:'fork 後父子共享頁，任一方寫入時才複製，加速行程建立。'},
+ {t:'Ch9 虛擬',q:'Thrashing 是什麼？如何解？',a:'花在分頁比執行多（frame 不足惡性循環）。解：local replacement、給足夠 frame、working set。'},
+ {t:'Ch9 虛擬',q:'Working set model？',a:'最近 Δ 次參考的頁集合 ≈ locality；Σ WSSᵢ > 總frame 時暫停一行程。'},
+];
+let fcIdx=0, fcKnow=0, fcDunno=0, fcDone=new Set();
+function fcRender(){
+  const c=cards[fcIdx];
+  document.getElementById('fc-tag').textContent=c.t;
+  document.getElementById('fc-q').textContent=c.q;
+  document.getElementById('fc-a').textContent=c.a;
+  document.getElementById('fc-card').classList.remove('flipped');
+  document.getElementById('fc-idx').textContent=fcIdx+1;
+  document.getElementById('fc-total').textContent=cards.length;
+  document.getElementById('fc-know').textContent=fcKnow;
+  document.getElementById('fc-dunno').textContent=fcDunno;
+}
+function fcFlip(){ document.getElementById('fc-card').classList.toggle('flipped'); }
+function fcMark(know){
+  if(!fcDone.has(fcIdx)){ fcDone.add(fcIdx); if(know)fcKnow++; else fcDunno++; }
+  fcIdx=(fcIdx+1)%cards.length; fcRender();
+}
+function fcReset(){ fcIdx=0;fcKnow=0;fcDunno=0;fcDone.clear();fcRender(); }
+fcRender();
+
+/* ===== Quiz ===== */
+const quiz=[
+ {type:'mc',tag:'2016 Ch5',q:'Which is true of multilevel queue scheduling?',
+  opts:['Processes can move between queues.','Each queue has its own scheduling algorithm.','It is the most general CPU-scheduling algorithm.','None of the above.'],
+  ans:1, exp:'多層佇列行程不能換佇列（能換的是 feedback queue）；最通用的是 multilevel feedback queue。各佇列有自己的演算法 → (B)。'},
+ {type:'mc',tag:'2016 Ch6',q:'A counting semaphore ______.',
+  opts:['is essentially an integer variable','is accessed through only one standard operation','can be modified simultaneously by multiple threads','cannot be used to control a thread\'s critical sections'],
+  ans:0, exp:'counting semaphore 本質是整數變數；透過 wait()/signal() 兩個原子操作存取，不可被多執行緒同時修改 → (A)。'},
+ {type:'mc',tag:'2016 Ch7',q:'Which statement is true?',
+  opts:['A safe state is a deadlocked state.','A safe state may lead to a deadlocked state.','An unsafe state is, by definition, always a deadlocked state.','An unsafe state may lead to a deadlocked state.'],
+  ans:3, exp:'safe 保證不死結；unsafe 只是「可能」死結，不必然 → (D)。'},
+ {type:'mc',tag:'2016 Ch8',q:'Which is true of compaction?',
+  opts:['It can be done at assembly, load, or execution time.','It solves internal fragmentation.','It is possible only if relocation is dynamic and done at execution time.','None of the above.'],
+  ans:2, exp:'compaction 解決外部碎裂，須執行時動態重定位 → (C)。'},
+ {type:'mc',tag:'Ch7 觀念',q:'死結的「四個必要條件」不包含下列何者？',
+  opts:['Mutual Exclusion','Hold and Wait','Aging','Circular Wait'],
+  ans:2, exp:'四條件：Mutual Exclusion、Hold and Wait、No Preemption、Circular Wait。Aging 是防止飢餓的方法。'},
+ {type:'mc',tag:'Ch9 計算',q:'參考字串 1,2,3,4,2,1,5,6,2,1,2,3,7,6,3,2,1,2,3,6（4 frames），Optimal 與 LRU 的 page fault 數？',
+  opts:['Optimal 8, LRU 10','Optimal 10, LRU 8','Optimal 9, LRU 9','Optimal 8, LRU 8'],
+  ans:0, exp:'Optimal = 8、LRU = 10（可在「頁面置換互動模擬」逐步驗證）。'},
+ {type:'mc',tag:'Ch8 計算',q:'5-bit 邏輯位址、頁大小 4 bytes、每筆 entry 2 bytes，頁表大小？',
+  opts:['8 bytes','16 bytes','32 bytes','64 bytes'],
+  ans:1, exp:'偏移=2 bits，頁號=5−2=3 bits，頁數=2³=8，8×2=16 bytes。'},
+ {type:'mc',tag:'Ch6 觀念',q:'下列關於 bounded-buffer 何者正確？',
+  opts:['先 wait(mutex) 再 wait(empty)','先 wait(empty) 再 wait(mutex)','wait 順序無所謂','只需一個 mutex'],
+  ans:1, exp:'必須先 wait(empty/full) 再 wait(mutex)，順序顛倒會死結。'},
+ {type:'fill',tag:'2011/14/15 Ch7',q:'銀行家 (0,4,2,0) from P1：批准後的一個安全序列（填 5 個 P，逗號分隔，如 P0,P2,...）',
+  ans:['p0,p2,p3,p1,p4','p0,p2,p1,p3,p4'], exp:'請求可批准。安全序列不唯一，<P0,P2,P3,P1,P4> 或 <P0,P2,P1,P3,P4> 皆可（前兩個一定是 P0、P2）。'},
+ {type:'fill',tag:'Ch8 計算',q:'4-bit 邏輯、頁大小 4 bytes、每筆 2 bytes → 頁表大小是幾 bytes？（只填數字）',
+  ans:['8','8 bytes','8bytes'], exp:'頁數=2^(4-2)=4，4×2=8 bytes。'},
+ {type:'fill',tag:'Ch6 填空',q:'Peterson\'s solution 的 entry section 第一行（提示 flag）：',
+  ans:['flag[i]=true','flag[i] = true','flag[i]=true;'], exp:'flag[i] = TRUE; turn = j; while(flag[j] && turn==j);'},
+];
+function renderQuiz(){
+  let h='';
+  quiz.forEach((item,i)=>{
+    h+='<div class="quiz-q"><div class="qnum">第 '+(i+1)+' 題 ｜ '+item.tag+'</div><div class="qtext">'+item.q+'</div>';
+    if(item.type==='mc'){
+      item.opts.forEach((o,j)=>{ h+='<div class="quiz-opt" id="q'+i+'o'+j+'" onclick="pick('+i+','+j+')">'+String.fromCharCode(65+j)+'. '+o+'</div>'; });
+    } else {
+      h+='<input class="fill-input" id="q'+i+'in" placeholder="輸入答案後按 Enter"><button class="btn btn-outline mt8" onclick="checkFill('+i+')">送出</button>';
+    }
+    h+='<div class="quiz-explain" id="q'+i+'e">💡 '+item.exp+'</div></div>';
+  });
+  document.getElementById('quiz-container').innerHTML=h;
+}
+let quizAns={};
+function pick(i,j){
+  if(quizAns[i]!==undefined) return;
+  const item=quiz[i]; quizAns[i]=(j===item.ans);
+  for(let k=0;k<item.opts.length;k++){ const el=document.getElementById('q'+i+'o'+k); el.classList.add('disabled'); }
+  document.getElementById('q'+i+'o'+item.ans).classList.add('correct');
+  if(j!==item.ans) document.getElementById('q'+i+'o'+j).classList.add('wrong');
+  document.getElementById('q'+i+'e').classList.add('show');
+}
+function checkFill(i){
+  const item=quiz[i]; const v=(document.getElementById('q'+i+'in').value||'').trim().toLowerCase().replace(/\s/g,'');
+  const ok=item.ans.some(a=>a.toLowerCase().replace(/\s/g,'')===v);
+  quizAns[i]=ok;
+  const inp=document.getElementById('q'+i+'in'); inp.style.borderColor=ok?'var(--success)':'var(--danger)';
+  document.getElementById('q'+i+'e').classList.add('show');
+}
+function quizScore(){
+  let c=0,tot=quiz.length;
+  quiz.forEach((item,i)=>{ if(quizAns[i]) c++; });
+  document.getElementById('quiz-result').innerHTML='得分：<span style="color:var(--accent2)">'+c+' / '+tot+'</span>'+(c===tot?' 🎉 全對！':'');
+}
+renderQuiz();
+document.addEventListener('keydown',e=>{ if(e.key==='Enter' && e.target.classList.contains('fill-input')){ const id=e.target.id; checkFill(parseInt(id.replace('q','').replace('in',''))); }});
+</script>
+</body>
+</html>
