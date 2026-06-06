@@ -1,54 +1,78 @@
-# OS Midterm Review (Operating Systems)
+# OS Review Materials (Operating Systems)
 
-Complete study materials for the Operating Systems midterm exam, covering **Chapters 1–5**.
+作業系統期中與期末複習資料整理。期中範圍以 Ch1-Ch5 為主；期末範圍為 **Ch5 投影片第 16 頁開始到 Ch9**。
 
-## Contents
+## Quick Start
 
-### Interactive Review Pages
-- **[review.html](review.html)** — Interactive review page (Chinese)
-- **[review_en.html](review_en.html)** — Interactive review page (English)
-  - Chapter summaries with key concepts
-  - Interactive process state diagram
-  - Interrupt-driven I/O 7-step flowchart animation
-  - Scheduler Activations step-by-step visualization
-  - 40+ flashcards with spaced repetition
-  - 14-question quiz with detailed explanations
+- 期中互動複習：開啟 `review.html`
+- 期中英文版互動複習：開啟 `review_en.html`
+- 期末互動複習：開啟 `review_final.html`
+- 期末考古題：閱讀 `期末考古題彙整.md` 或 `期末考古題彙整.pdf`
+- 期末解答：閱讀 `期末考古題解答.md` 或 `期末考古題解答.pdf`
 
-### Lecture Slides
-| File | Topic |
-|------|-------|
-| `ch01.pdf` | Introduction |
-| `ch02.pdf` | System Structures |
-| `ch03.pdf` | Processes |
-| `ch04.pdf` | Multithreaded Programming |
-| `ch05.pdf` | CPU Scheduling |
-| `midterm_range_merged.pdf` | All chapters merged |
+互動 HTML 都可以直接用瀏覽器開啟，不需要另外架 server。
 
-### Past Exams (2011–2016)
-| Year | Exam | Answer |
-|------|------|--------|
-| 2011 | `2011mid.pdf` | `2011midA.pdf` |
-| 2012 | `2012mid.pdf` | — |
-| 2013 | `2013mid.pdf` | `2013midA.pdf` |
-| 2014 | `2014mid.pdf` | — |
-| 2015 | `2015mid.pdf` | `2015midA.pdf` |
-| 2016 | `2016mid.pdf` | `2016midA.pdf` |
+## 期末複習資料
 
-### Study Notes
 | File | Description |
 |------|-------------|
-| `複習筆記.md` / `.pdf` | Review notes |
-| `歷屆考題與解答.md` / `.pdf` | Past exam analysis & solutions |
-| `練習考卷.md` / `.pdf` | Practice tests (zh/en) |
+| `review_final.html` | 期末互動式複習網頁，涵蓋 Ch5-Ch9 |
+| `期末考古題彙整.md` / `.pdf` | 2011-2016 期末考古題彙整，已依題型、年份、章節與主題標註 |
+| `期末考古題解答.md` / `.pdf` | 期末考古題詳解，包含甘特圖、銀行家演算法、頁面置換與同步程式填空 |
+| `期末複習講義.md` | Ch5-Ch9 複習講義、常考重點、比較表與易錯提醒 |
 
-## Key Topics
+### 期末互動 HTML 功能
 
-- **Interrupts** — Interrupt vector, interrupt-driven I/O vs busy-waiting, 7-step flowchart
-- **System Calls** — API flow (software interrupt → dual-mode → system call number → table of code pointer)
-- **Processes** — 5-state model, fork()/exec()/wait(), shared memory (shmget/shmat/shmdt/shmctl)
-- **Threads** — Many-to-One / One-to-One / Many-to-Many, Scheduler Activations, LWP, upcall
-- **CPU Scheduling** — FCFS, SJF, Priority (aging), Round-Robin, Multilevel Feedback Queue
+- Ch5-Ch9 各章重點整理
+- 銀行家演算法互動演算
+- Optimal vs LRU 頁面置換模擬
+- 閃卡複習
+- 歷屆題型改編測驗與詳解
 
-## Usage
+### 期末重點主題
 
-Open `review.html` or `review_en.html` in any browser — no server required.
+- **Ch5 CPU Scheduling**：Multilevel Feedback Queue、Waiting Time、Turnaround Time、Load Balancing、Little's Formula、Starvation / Aging
+- **Ch6 Process Synchronization**：Critical Section、Peterson's Solution、TestAndSet、Semaphores、Readers-Writers、Producer-Consumer、Monitors
+- **Ch7 Deadlocks**：Four Necessary Conditions、Safe / Unsafe State、Banker's Algorithm、Deadlock Prevention / Avoidance
+- **Ch8 Main Memory**：Address Binding、Paging、Page Table Size、TLB、Hierarchical Paging、Compaction
+- **Ch9 Virtual Memory**：Demand Paging、Page Fault Handling、Page Replacement、Optimal / LRU、Thrashing、Working Set
+
+## 期中複習資料
+
+| File | Description |
+|------|-------------|
+| `review.html` | 期中互動式複習網頁（中文） |
+| `review_en.html` | 期中互動式複習網頁（英文） |
+| `複習筆記.md` | 期中複習筆記 |
+| `考古題彙整.md` / `.pdf` | 期中考古題彙整 |
+| `考古題解答.md` / `.pdf` | 期中考古題解答 |
+| `歷屆考題與解答.md` | 歷屆題目與解答整理 |
+| `練習考卷.md` | 練習考卷 |
+| `練習考卷_答案.md` / `.pdf` | 練習考卷答案 |
+| `總複習作答紀錄.md` | 總複習互動問答紀錄與回饋 |
+
+### 期中重點主題
+
+- **Interrupts**：Interrupt vector、interrupt-driven I/O、busy waiting
+- **System Calls**：API、software interrupt、dual mode、system call table
+- **Processes**：process states、fork / exec / wait、shared memory
+- **Threads**：Many-to-One、One-to-One、Many-to-Many、Scheduler Activations、LWP
+- **CPU Scheduling**：FCFS、SJF、Priority、Round-Robin、Multilevel Feedback Queue
+
+## Slides And Source Exams
+
+| File | Topic |
+|------|-------|
+| `ch05.pdf` | CPU Scheduling |
+| `ch06.pdf` | Process Synchronization |
+| `ch07 (2).pdf` | Deadlocks |
+| `ch08_lo.pdf` | Main Memory |
+| `ch09_lo.pdf` | Virtual Memory |
+| `2011final.pdf` - `2016final.pdf` | 歷屆期末考原始 PDF |
+
+## Suggested Study Flow
+
+1. 先讀 `期末複習講義.md` 建立 Ch5-Ch9 架構。
+2. 用 `review_final.html` 練銀行家演算法、頁面置換與閃卡。
+3. 讀 `期末考古題彙整.md`，確認每題對應章節與主題。
+4. 對照 `期末考古題解答.md` 檢查計算題與證明題寫法。
